@@ -49,12 +49,48 @@
             transition: all 0.3s ease;
         }
 
-        /* Glass morphism эффекты */
-        .glass {
-            background: var(--card-bg);
+        /* Мобильная навигация */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 0.5rem;
+        }
+
+        .mobile-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+        }
+
+        .mobile-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav-btn.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+        }
+
+        .mobile-nav-btn i {
+            font-size: 1.25rem;
         }
 
         /* Навигация */
@@ -188,6 +224,7 @@
         .page {
             display: none;
             animation: fadeInUp 0.6s ease;
+            padding-bottom: 80px;
         }
 
         .page.active {
@@ -243,7 +280,7 @@
             gap: 0.75rem;
         }
 
-        /* Профиль пользователя - Telegram стиль */
+        /* Профиль пользователя */
         .profile-header {
             position: relative;
             margin-bottom: 2rem;
@@ -537,6 +574,96 @@
             transition: width 0.3s ease;
         }
 
+        /* Мемы и развлечения */
+        .memes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .meme-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .meme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .meme-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .meme-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .meme-description {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* OSINT ветви */
+        .branches-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .branch-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .branch-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .branch-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .branch-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .branch-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
         /* Модальные окна */
         .modal {
             position: fixed;
@@ -719,6 +846,10 @@
                 display: none;
             }
 
+            .mobile-nav {
+                display: block;
+            }
+
             .container {
                 margin-top: 80px;
                 padding: 0 1rem;
@@ -739,6 +870,47 @@
 
             .message {
                 max-width: 85%;
+            }
+
+            .branches-container {
+                grid-template-columns: 1fr;
+            }
+
+            .memes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-name {
+                font-size: 1.5rem;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin-top: 70px;
+                padding: 0 0.5rem;
+            }
+
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item {
+                padding: 1rem;
+            }
+
+            .profile-info {
+                padding: 0 1rem 1rem;
             }
         }
     </style>
@@ -767,6 +939,10 @@
             <a href="#" class="nav-link" onclick="showPage('tools')">
                 <i class="fas fa-tools"></i>
                 Инструменты
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('memes')">
+                <i class="fas fa-laugh"></i>
+                Мемы
             </a>
             <a href="#" class="nav-link" onclick="showPage('profile')">
                 <i class="fas fa-user"></i>
@@ -806,6 +982,32 @@
             </div>
         </div>
     </nav>
+
+    <!-- Мобильная навигация -->
+    <div class="mobile-nav glass">
+        <div class="mobile-nav-grid">
+            <button class="mobile-nav-btn active" onclick="showPage('home')">
+                <i class="fas fa-home"></i>
+                Главная
+            </button>
+            <button class="mobile-nav-btn" onclick="showPage('community')">
+                <i class="fas fa-users"></i>
+                Чат
+            </button>
+            <button class="mobile-nav-btn" onclick="showPage('knowledge')">
+                <i class="fas fa-graduation-cap"></i>
+                Знания
+            </button>
+            <button class="mobile-nav-btn" onclick="showPage('memes')">
+                <i class="fas fa-laugh"></i>
+                Мемы
+            </button>
+            <button class="mobile-nav-btn" onclick="showPage('profile')">
+                <i class="fas fa-user"></i>
+                Профиль
+            </button>
+        </div>
+    </div>
 
     <!-- Основной контент -->
     <div class="container">
@@ -853,6 +1055,17 @@
                         Начать обучение
                     </button>
                 </div>
+
+                <div class="card glass">
+                    <h3 class="card-title">
+                        <i class="fas fa-laugh"></i>
+                        Мемы и юмор
+                    </h3>
+                    <p>Отдохните и посмейтесь над мемами из мира OSINT и информационной безопасности.</p>
+                    <button class="btn btn-primary mt-4" onclick="showPage('memes')">
+                        Смотреть мемы
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -895,13 +1108,38 @@
             <div class="card glass">
                 <h1 class="card-title">
                     <i class="fas fa-graduation-cap"></i>
-                    База знаний
+                    База знаний OSINT
                 </h1>
-                <p>Изучайте методы, техники и лучшие практики работы с открытыми источниками.</p>
+                <p>Изучайте методы, техники и лучшие практики работы с открытыми источниками. Полное руководство по 48 ветвям OSINT.</p>
             </div>
 
             <div class="knowledge-grid">
                 <!-- Карточки знаний будут здесь -->
+            </div>
+
+            <div class="card glass">
+                <h2 class="card-title">
+                    <i class="fas fa-sitemap"></i>
+                    48 Ветвей OSINT
+                </h2>
+                <div class="branches-container" id="branchesContainer">
+                    <!-- Ветви OSINT будут здесь -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Мемы -->
+        <div id="memes" class="page">
+            <div class="card glass">
+                <h1 class="card-title">
+                    <i class="fas fa-laugh"></i>
+                    Мемы OSINT
+                </h1>
+                <p>Юмор из мира открытой разведки и информационной безопасности. Отдохните и улыбнитесь!</p>
+            </div>
+
+            <div class="memes-grid" id="memesGrid">
+                <!-- Мемы будут здесь -->
             </div>
         </div>
 
@@ -1130,6 +1368,93 @@
         // Создаем специальный аккаунт создателя
         const CREATOR_EMAIL = 'evgeniymidov@gmail.com';
         const CREATOR_USERNAME = 'Evgeniy Midov';
+        const CREATOR_PASSWORD = '228822007700V';
+
+        // 48 ветвей OSINT
+        const osintBranches = [
+            { number: 1, title: "Поисковые системы", description: "Google, Яндекс, Bing и другие поисковые системы с расширенными операторами" },
+            { number: 2, title: "Социальные сети", description: "Facebook, Twitter, Instagram, LinkedIn, VKontakte и другие" },
+            { number: 3, title: "Форумы и сообщества", description: "Специализированные форумы, Reddit, Quora и дискуссионные площадки" },
+            { number: 4, title: "Блоги и личные сайты", description: "WordPress, Blogger, LiveJournal и персональные блоги" },
+            { number: 5, title: "Новостные сайты", description: "СМИ, новостные агрегаторы и информационные агентства" },
+            { number: 6, title: "Государственные реестры", description: "ЕГРЮЛ, ЕГРИП, земельные кадастры и другие официальные базы" },
+            { number: 7, title: "Судебные базы данных", description: "Судебные решения, базы судебных приставов" },
+            { number: 8, title: "Базы данных компаний", description: "Справочники предприятий, рейтинги компаний" },
+            { number: 9, title: "Патентные базы", description: "Базы патентов, товарных знаков, изобретений" },
+            { number: 10, title: "Научные публикации", description: "Научные статьи, диссертации, исследовательские работы" },
+            { number: 11, title: "Картографические сервисы", description: "Google Maps, Яндекс.Карты, OpenStreetMap" },
+            { number: 12, title: "Спутниковые снимки", description: "Google Earth, Sentinel Hub, спутниковые архивы" },
+            { number: 13, title: "Геолокационные данные", description: "Геотеги, координаты, история перемещений" },
+            { number: 14, title: "Фотографии и изображения", description: "Анализ EXIF данных, обратный поиск изображений" },
+            { number: 15, title: "Видео платформы", description: "YouTube, Vimeo, TikTok и анализ видеоконтента" },
+            { number: 16, title: "Аудио материалы", description: "Подкасты, аудиозаписи, анализ голоса" },
+            { number: 17, title: "Документы и презентации", description: "PDF, Word, PowerPoint файлы с метаданными" },
+            { number: 18, title: "Базы email адресов", description: "Поиск и верификация email адресов" },
+            { number: 19, title: "Телефонные справочники", description: "Базы телефонных номеров, операторы связи" },
+            { number: 20, title: "WHOIS базы данных", description: "Информация о доменах и их владельцах" },
+            { number: 21, title: "DNS записи", description: "Анализ DNS записей, поддоменов" },
+            { number: 22, title: "IP адреса и сети", description: "Геолокация IP, информация о провайдерах" },
+            { number: 23, title: "Веб-архивы", description: "Wayback Machine, веб-архивы других сервисов" },
+            { number: 24, title: "Кэш поисковых систем", description: "Кэшированные версии веб-страниц" },
+            { number: 25, title: "Открытые API", description: "Публичные API социальных сетей и сервисов" },
+            { number: 26, title: "Базы утечек данных", description: "Have I Been Pwned и другие сервисы проверки утечек" },
+            { number: 27, title: "Криптовалютные транзакции", description: "Анализ блокчейна, транзакций Bitcoin/Ethereum" },
+            { number: 28, title: "Финансовые отчеты", description: "Годовые отчеты компаний, финансовые показатели" },
+            { number: 29, title: "Таможенные декларации", description: "Базы таможенных операций и деклараций" },
+            { number: 30, title: "Транспортные системы", description: "Расписания, билеты, системы отслеживания" },
+            { number: 31, title: "Метеоданные", description: "Исторические и текущие метеорологические данные" },
+            { number: 32, title: "Экологические данные", description: "Качество воздуха, воды, экологические отчеты" },
+            { number: 33, title: "Медицинские базы", description: "Научные медицинские публикации, базы исследований" },
+            { number: 34, title: "Образовательные ресурсы", description: "Базы учебных заведений, научные работы" },
+            { number: 35, title: "Культурные учреждения", description: "Музеи, библиотеки, архивы" },
+            { number: 36, title: "Спортивные базы", description: "Результаты соревнований, статистика спортсменов" },
+            { number: 37, title: "Религиозные организации", description: "Базы религиозных учреждений и служителей" },
+            { number: 38, title: "Благотворительные фонды", description: "Отчеты НКО, благотворительные организации" },
+            { number: 39, title: "Политические ресурсы", description: "Базы политиков, избирательные комиссии" },
+            { number: 40, title: "Военные ресурсы", description: "Открытые военные данные, аналитические центры" },
+            { number: 41, title: "Правовые базы", description: "Законы, нормативные акты, правовые системы" },
+            { number: 42, title: "Миграционные данные", description: "Статистика миграции, визовые центры" },
+            { number: 43, title: "Туристические ресурсы", description: "Базы отелей, отзывы, туристические маршруты" },
+            { number: 44, title: "Торговые площадки", description: "eBay, Amazon, Avito и другие маркетплейсы" },
+            { number: 45, title: "Рекламные сети", description: "Данные рекламных кампаний, таргетинг" },
+            { number: 46, title: "Статистические базы", description: "Госкомстат, Eurostat, международная статистика" },
+            { number: 47, title: "Научно-технические ресурсы", description: "Базы исследований, технические стандарты" },
+            { number: 48, title: "Международные организации", description: "ООН, Всемирный банк, МВФ и другие" }
+        ];
+
+        // Мемы OSINT
+        const osintMemes = [
+            {
+                title: "Когда находишь нужную информацию в Google за 5 минут",
+                description: "А клиент думал, что это займет недели расследования",
+                icon: "fas fa-search"
+            },
+            {
+                title: "OSINT специалист vs Обычный пользователь",
+                description: "Мы видим разный интернет",
+                icon: "fas fa-user-secret"
+            },
+            {
+                title: "Когда кто-то говорит 'Я в интернете ничего не оставляю'",
+                description: "А ты находишь его аккаунты за 10 минут",
+                icon: "fas fa-laugh-squint"
+            },
+            {
+                title: "Поиск по соцсетям",
+                description: "От 'никогда не был в соцсетях' до 'вот его аккаунт в ВК 2007 года'",
+                icon: "fas fa-share-alt"
+            },
+            {
+                title: "Анализ EXIF данных",
+                description: "Когда по фото находишь адрес дома и модель фотоаппарата",
+                icon: "fas fa-camera"
+            },
+            {
+                title: "Работа с WayBack Machine",
+                description: "Находишь удаленные страницы и чувствуешь себя хакером",
+                icon: "fas fa-archive"
+            }
+        ];
 
         // Инициализация базы знаний
         function initKnowledgeBase() {
@@ -1178,7 +1503,7 @@
                 users[CREATOR_EMAIL] = {
                     username: CREATOR_USERNAME,
                     email: CREATOR_EMAIL,
-                    password: 'creator2024', // Можно поменять
+                    password: CREATOR_PASSWORD,
                     role: 'creator',
                     level: 99,
                     reputation: 999,
@@ -1191,6 +1516,46 @@
                 };
                 localStorage.setItem('osint_users', JSON.stringify(users));
             }
+        }
+
+        // Загрузка ветвей OSINT
+        function loadOSINTBranches() {
+            const container = document.getElementById('branchesContainer');
+            container.innerHTML = '';
+            
+            osintBranches.forEach(branch => {
+                const card = document.createElement('div');
+                card.className = 'branch-card';
+                
+                card.innerHTML = `
+                    <div class="branch-number">${branch.number}</div>
+                    <h3 class="branch-title">${branch.title}</h3>
+                    <p class="branch-description">${branch.description}</p>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Загрузка мемов
+        function loadMemes() {
+            const container = document.getElementById('memesGrid');
+            container.innerHTML = '';
+            
+            osintMemes.forEach((meme, index) => {
+                const card = document.createElement('div');
+                card.className = 'meme-card';
+                
+                card.innerHTML = `
+                    <div class="meme-image">
+                        <i class="${meme.icon}"></i>
+                    </div>
+                    <h3 class="meme-title">${meme.title}</h3>
+                    <p class="meme-description">${meme.description}</p>
+                `;
+                
+                container.appendChild(card);
+            });
         }
 
         // ==================== СИСТЕМА АУТЕНТИФИКАЦИИ ====================
@@ -1289,9 +1654,18 @@
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => btn.classList.remove('active'));
             
             document.getElementById(pageId).classList.add('active');
-            if (event) event.target.classList.add('active');
+            
+            // Обновляем активные кнопки навигации
+            if (event) {
+                if (event.target.classList.contains('mobile-nav-btn')) {
+                    event.target.classList.add('active');
+                } else {
+                    event.target.classList.add('active');
+                }
+            }
             
             // Специальная логика для разных страниц
             if (pageId === 'community') {
@@ -1299,8 +1673,11 @@
                 updateOnlineUsers();
             } else if (pageId === 'knowledge') {
                 loadKnowledgeBase();
+                loadOSINTBranches();
             } else if (pageId === 'profile') {
                 updateProfileStats();
+            } else if (pageId === 'memes') {
+                loadMemes();
             }
         }
 
@@ -1563,131 +1940,133 @@
 
         // ==================== УТИЛИТЫ ====================
         function showNotification(message, type = 'info') {
-            // Создаем уведомление
             const notification = document.createElement('div');
-            notification.className = `glass`;notification.style.cssText = `
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    border-left: 4px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--primary)'};
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    color: var(--text);
-    z-index: 3000;
-    animation: slideInRight 0.3s ease;
-    max-width: 300px;
-`;
+            notification.className = `glass`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                border-left: 4px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--primary)'};
+                background: var(--card-bg);
+                border: 1px solid var(--card-border);
+                color: var(--text);
+                z-index: 3000;
+                animation: slideInRight 0.3s ease;
+                max-width: 300px;
+            `;
 
-notification.innerHTML = `
-    <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'}-circle"></i>
-        <span>${message}</span>
-    </div>
-`;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'}-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
 
-document.body.appendChild(notification);
+            document.body.appendChild(notification);
 
-setTimeout(() => {
-    notification.style.animation = 'slideOutRight 0.3s ease';
-    setTimeout(() => notification.remove(), 300);
-}, 3000);
-}
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
 
-function toggleTheme() {
-const currentTheme = document.body.getAttribute('data-theme') || 'dark';
-const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-document.body.setAttribute('data-theme', newTheme);
-settings.theme = newTheme;
-localStorage.setItem('osint_settings', JSON.stringify(settings));
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            settings.theme = newTheme;
+            localStorage.setItem('osint_settings', JSON.stringify(settings));
 
-const themeIcon = document.querySelector('.theme-toggle i');
-themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            const themeIcon = document.querySelector('.theme-toggle i');
+            themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
 
-showNotification(`Тема изменена на ${newTheme === 'dark' ? 'тёмную' : 'светлую'}`, 'success');
-}
+            showNotification(`Тема изменена на ${newTheme === 'dark' ? 'тёмную' : 'светлую'}`, 'success');
+        }
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
-document.addEventListener('DOMContentLoaded', function() {
-// Загружаем настройки
-if (Object.keys(settings).length === 0) {
-    settings = {
-        theme: 'dark',
-        language: 'ru',
-        notifications: true
-    };
-    localStorage.setItem('osint_settings', JSON.stringify(settings));
-}
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем настройки
+            if (Object.keys(settings).length === 0) {
+                settings = {
+                    theme: 'dark',
+                    language: 'ru',
+                    notifications: true
+                };
+                localStorage.setItem('osint_settings', JSON.stringify(settings));
+            }
 
-// Применяем настройки
-document.body.setAttribute('data-theme', settings.theme);
-document.getElementById('languageSelect').value = settings.language;
-document.querySelector('.theme-toggle i').className = settings.theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            // Применяем настройки
+            document.body.setAttribute('data-theme', settings.theme);
+            document.getElementById('languageSelect').value = settings.language;
+            document.querySelector('.theme-toggle i').className = settings.theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
 
-// Инициализируем данные
-initCreatorAccount();
-initKnowledgeBase();
+            // Инициализируем данные
+            initCreatorAccount();
+            initKnowledgeBase();
+            loadOSINTBranches();
+            loadMemes();
 
-// Загружаем текущего пользователя
-const savedUser = localStorage.getItem('currentUser');
-if (savedUser) {
-    currentUser = JSON.parse(savedUser);
-    showPage('profile');
-}
+            // Загружаем текущего пользователя
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showPage('profile');
+            }
 
-updateUI();
+            updateUI();
 
-// Обновляем статистику каждые 30 секунд
-setInterval(updatePlatformStats, 30000);
+            // Обновляем статистику каждые 30 секунд
+            setInterval(updatePlatformStats, 30000);
 
-// Авто-сохранение каждую минуту
-setInterval(() => {
-    if (currentUser) {
-        users[currentUser.email] = currentUser;
-        localStorage.setItem('osint_users', JSON.stringify(users));
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    }
-}, 60000);
-});
+            // Авто-сохранение каждую минуту
+            setInterval(() => {
+                if (currentUser) {
+                    users[currentUser.email] = currentUser;
+                    localStorage.setItem('osint_users', JSON.stringify(users));
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+            }, 60000);
+        });
 
-// Добавляем стили для анимаций
-const style = document.createElement('style');
-style.textContent = `
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
+        // Добавляем стили для анимаций
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
 
-@keyframes slideOutRight {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
 
-@keyframes messageSlide {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-`;
-document.head.appendChild(style);
-</script>
+            @keyframes messageSlide {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
-</html>
+    </html>
