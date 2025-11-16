@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evgeniy Midov | OSINT.EXE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #ff6b9d;
+            --secondary: #a8edea;
+            --bg: linear-gradient(135deg, #f5f7fa 0%, #e3edf7 100%);
+            --text: #333;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --terminal-bg: rgba(0, 0, 0, 0.05);
+        }
+        
+        [data-theme="dark"] {
+            --primary: #ff6b9d;
+            --secondary: #a8edea;
+            --bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            --text: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --terminal-bg: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200%;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--primary) 0%, transparent 50%, var(--secondary) 100%);
+            opacity: 0.1;
+            transform: translateY(0);
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .logo-container {
+            margin-bottom: 20px;
+        }
+        
+        .animated-logo {
+            font-family: 'Courier New', monospace;
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glitch 5s infinite, glow 2s ease-in-out infinite alternate;
+            text-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+        }
+        
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            5% { transform: translate(-2px, 2px); }
+            10% { transform: translate(2px, -2px); }
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px var(--primary); }
+            to { text-shadow: 0 0 20px var(--secondary), 0 0 30px var(--primary); }
+        }
+        
+        .profile-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 10px 25px rgba(168, 237, 234, 0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text);
+            margin-bottom: 25px;
+            font-weight: 300;
+            opacity: 0.8;
+        }
+        
+        .osint-badge {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            display: inline-block;
+            margin: 15px 0;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(168, 237, 234, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 30px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: var(--card-bg);
+            color: var(--text);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-telegram {
+            background: linear-gradient(135deg, #0088cc, #00a2e8);
+            color: white;
+        }
+        
+        .btn-tiktok {
+            background: linear-gradient(135deg, #ff0050, #ff1a75);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .code-terminal {
+            background: var(--terminal-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--primary);
+            min-height: 120px;
+        }
+        
+        .code-line {
+            margin: 8px 0;
+            color: var(--text);
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .neon-text {
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(255, 107, 157, 0.5);
+        }
+        
+        .mask-icon {
+            font-size: 2rem;
+            margin: 15px 0;
+            color: var(--secondary);
+            text-shadow: 0 0 15px rgba(168, 237, 234, 0.7);
+        }
+        
+        .status {
+            color: var(--text);
+            font-size: 0.9rem;
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+        
+        /* Стили для улучшенной мини-игры */
+        .hack-game {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .hack-progress {
+            width: 100%;
+            height: 10px;
+            background: var(--terminal-bg);
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .hack-target {
+            font-family: 'Courier New', monospace;
+            background: var(--terminal-bg);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .hack-target.breached {
+            border-color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+        
+        .hack-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 10px 0;
+        }
+        
+        .hack-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .hack-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .hack-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .game-message {
+            margin: 15px 0;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        
+        /* Анимированные иконки навыков */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .skill-icon {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 2rem;
+            color: var(--primary);
+            animation: bounce 2s infinite;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .skill-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .skill-icon:nth-child(2) { animation-delay: 0.2s; }
+        .skill-icon:nth-child(3) { animation-delay: 0.4s; }
+        .skill-icon:nth-child(4) { animation-delay: 0.6s; }
+        .skill-icon:nth-child(5) { animation-delay: 0.8s; }
+        .skill-icon:nth-child(6) { animation-delay: 1s; }
+        
+        /* Достижения */
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .achievement {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        
+        .achievement.unlocked {
+            opacity: 1;
+            box-shadow: 0 5px 15px rgba(168, 237, 234, 0.3);
+        }
+        
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        /* Живая статистика */
+        .live-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Дополнительные секции */
+        .section {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .section h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .meme-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .meme-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        
+        .password-checker {
+            margin: 15px 0;
+        }
+        
+        .password-strength {
+            height: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .strength-weak { background: #ff4444; width: 25%; }
+        .strength-medium { background: #ffaa00; width: 50%; }
+        .strength-strong { background: #00ff00; width: 75%; }
+        .strength-very-strong { background: #00aa00; width: 100%; }
+        
+        .install-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+        
+        .gradient-shift {
+            animation: gradientShift 10s ease infinite;
+            background-size: 200% 200%;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Параллакс фон -->
+    <div class="parallax-bg" id="parallaxBg"></div>
+    
+    <!-- Переключатель темы -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <div class="container">
+        <!-- Анимированный логотип -->
+        <div class="logo-container">
+            <div class="animated-logo">OSINT.EXE</div>
+        </div>
+        
+        <div class="profile-card">
+            <div class="avatar">
+                <i class="fas fa-user-secret"></i>
+            </div>
+            <h1>Evgeniy Midov</h1>
+            <div class="subtitle">ПИЗДАТЫЙ</div>
+            
+            <div class="mask-icon">
+                <i class="fas fa-mask"></i>
+            </div>
+            
+            <div class="osint-badge">
+                <i class="fas fa-code"></i> PROJECT: OSINT.EXE
+            </div>
+        </div>
+        
+        <!-- Живая статистика -->
+        <div class="live-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="timeOnline">00:00:00</div>
+                <div>Время на сайте</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="hackCount">0</div>
+                <div>Успешных взломов</div>
+            </div>
+        </div>
+        
+        <!-- Улучшенная мини-игра взлома -->
+        <div class="hack-game">
+            <h3>🎮 OSINT SIMULATOR 2.0</h3>
+            <div class="game-stats">
+                <span>Уровень: <span id="gameLevel">1</span></span>
+                <span>Опыт: <span id="gameXP">0</span>/100</span>
+            </div>
+            <div class="hack-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="hack-target" id="hackTarget">Загрузка цели...</div>
+            <input type="text" class="hack-input" id="hackInput" placeholder="Введите код взлома..." maxlength="20">
+            <div>
+                <button class="hack-btn" onclick="attemptHack()">Взломать</button>
+                <button class="hack-btn" onclick="skipTarget()">Новая цель</button>
+            </div>
+            <div class="game-message" id="gameMessage"></div>
+            <div class="hack-timer" id="hackTimer">Время: 30с</div>
+        </div>
+        
+        <!-- Достижения -->
+        <div class="section">
+            <h3>🏆 Достижения</h3>
+            <div class="achievements">
+                <div class="achievement" id="achFirstHack">
+                    <div class="achievement-icon">🔓</div>
+                    <div>Первый взлом</div>
+                </div>
+                <div class="achievement" id="achMasterHacker">
+                    <div class="achievement-icon">💻</div>
+                    <div>Мастер взлома</div>
+                </div>
+                <div class="achievement" id="achSpeedRunner">
+                    <div class="achievement-icon">⚡</div>
+                    <div>Спидраннер</div>
+                </div>
+                <div class="achievement" id="achOsintPro">
+                    <div class="achievement-icon">🔍</div>
+                    <div>OSINT Профи</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Анимированные иконки навыков -->
+        <div class="skills-grid">
+            <div class="skill-icon" title="Поиск информации"><i class="fas fa-search"></i></div>
+            <div class="skill-icon" title="Анализ данных"><i class="fas fa-chart-line"></i></div>
+            <div class="skill-icon" title="Взлом"><i class="fas fa-code"></i></div>
+            <div class="skill-icon" title="Сеть"><i class="fas fa-network-wired"></i></div>
+            <div class="skill-icon" title="Безопасность"><i class="fas fa-shield-alt"></i></div>
+            <div class="skill-icon" title="Шифрование"><i class="fas fa-lock"></i></div>
+        </div>
+        
+        <!-- Терминал с анимацией печатающего текста -->
+        <div class="code-terminal" id="codeTerminal">
+            <div class="code-line">> INITIALIZING OSINT.EXE...</div>
+            <div class="code-line">> USER: <span class="neon-text">Evgeniy Midov</span></div>
+            <div class="code-line">> STATUS: <span class="neon-text">ACTIVE</span></div>
+            <div class="code-line">> CLEARANCE: <span class="neon-text">MAXIMUM</span></div>
+            <div class="code-line">> LAST_ACCESS: <span class="neon-text">NOW</span></div>
+        </div>
+        
+        <!-- Проверка пароля -->
+        <div class="section">
+            <h3>🔐 Проверка сложности пароля</h3>
+            <div class="password-checker">
+                <input type="text" class="hack-input" id="passwordInput" placeholder="Введите пароль для проверки">
+                <div class="password-strength" id="passwordStrength"></div>
+                <div id="passwordFeedback"></div>
+            </div>
+        </div>
+        
+        <!-- Случайные мемы -->
+        <div class="section">
+            <h3>😄 OSINT Мемы</h3>
+            <div class="meme-container">
+                <div id="memeText">Нажми кнопку для мема!</div>
+                <button class="meme-btn" onclick="showRandomMeme()">🎲 Случайный мем</button>
+            </div>
+        </div>
+        
+        <!-- Мини-уроки -->
+        <div class="section">
+            <h3>📚 Мини-уроки OSINT</h3>
+            <div id="currentLesson">
+                <h4>Основы OSINT</h4>
+                <p>OSINT (Open Source Intelligence) - сбор информации из открытых источников.</p>
+                <button class="hack-btn" onclick="nextLesson()">Следующий урок</button>
+            </div>
+        </div>
+        
+        <!-- Кнопка установки PWA -->
+        <div class="section">
+            <h3>📱 Установить приложение</h3>
+            <button class="install-btn" id="installButton">
+                <i class="fas fa-download"></i> Добавить на главный экран
+            </button>
+        </div>
+        
+        <div class="buttons-container">
+            <a href="https://t.me/psycho_midov" class="btn btn-telegram">
+                <i class="fab fa-telegram"></i>
+                Telegram: @psycho_midov
+            </a>
+            
+            <a href="https://www.tiktok.com/@Medovikov_smertniy" class="btn btn-tiktok">
+                <i class="fab fa-tiktok"></i>
+                TikTok: Medovikov_smertniy
+            </a>
+        </div>
+        
+        <div class="osint-badge">
+            <i class="fas fa-star"></i> Evgeniy Midov Бог КМ
+        </div>
+        
+        <div class="status">
+            System online • Mr.Robot Mode: Activated • Взломов: <span id="totalHacks">0</span>
+        </div>
+    </div>
+
+    <script>
+        // PWA Manifest
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('SW Registered'))
+                .catch(() => console.log('SW Registration Failed'));
+        }
+
+        // Переключение темы
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        themeToggle.addEventListener('click', () => {
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeToggle.innerHTML = isDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        });
+
+        // Загрузка темы из localStorage
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', savedTheme);
+        themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+
+        // Параллакс эффект
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.getElementById('parallaxBg');
+            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+
+        // Плавная смена градиентов
+        function updateGradient() {
+            const hue = (Date.now() / 10000) % 360;
+            document.documentElement.style.setProperty('--primary', `hsl(${hue}, 70%, 65%)`);
+            document.documentElement.style.setProperty('--secondary', `hsl(${hue + 60}, 70%, 65%)`);
+            requestAnimationFrame(updateGradient);
+        }
+        updateGradient();
+
+        // Анимация печатающего текста
+        const terminalLines = document.querySelectorAll('.code-line');
+        terminalLines.forEach((line, index) => {
+            line.style.animationDelay = `${index * 0.5}s`;
+        });
+
+        // Живая статистика - время на сайте
+        let startTime = Date.now();
+        function updateTime() {
+            const currentTime = Date.now();
+            const diff = Math.floor((currentTime - startTime) / 1000);
+            const hours = Math.floor(diff / 3600);
+            const minutes = Math.floor((diff % 3600) / 60);
+            const seconds = diff % 60;
+            document.getElementById('timeOnline').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        setInterval(updateTime, 1000);
+
+        // Улучшенная мини-игра взлома
+        let gameState = {
+            level: 1,
+            xp: 0,
+            successfulHacks: 0,
+            currentTarget: '',
+            hackAttempts: 0,
+            timer: 30,
+            timerInterval: null
+        };
+
+        const hackTypes = [
+            { name: "Пароль WiFi", pattern: "WIFI-****-****", difficulty: 1 },
+            { name: "Email аккаунт", pattern: "***@****.**", difficulty: 2 },
+            { name: "Банковская система", pattern: "BANK-****-****", difficulty: 3 },
+            { name: "Пентагон", pattern: "PENT-****-****", difficulty: 4 },
+            { name: "ЦРУ сервер", pattern: "CIA-****-****", difficulty: 5 }
+        ];
+
+        function generateTarget() {
+            const hackType = hackTypes[Math.min(gameState.level - 1, hackTypes.length - 1)];
+            let target = hackType.pattern;
+            target = target.replace(/\*/g, () => {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                return chars[Math.floor(Math.random() * chars.length)];
+            });
+            gameState.currentTarget = target;
+            gameState.timer = 30 - (gameState.level * 2);
+            document.getElementById('hackTarget').textContent = `${hackType.name}: ${target}`;
+            document.getElementById('hackTarget').classList.remove('breached');
+            document.getElementById('gameMessage').textContent = '';
+            document.getElementById('hackTimer').textContent = `Время: ${gameState.timer}с`;
+            
+            // Таймер
+            clearInterval(gameState.timerInterval);
+            gameState.timerInterval = setInterval(() => {
+                gameState.timer--;
+                document.getElementById('hackTimer').textContent = `Время: ${gameState.timer}с`;
+                if (gameState.timer <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    document.getElementById('gameMessage').textContent = '⏰ Время вышло! Цель ушла в оффлайн.';
+                    document.getElementById('gameMessage').style.color = '#ff4444';
+                    setTimeout(generateTarget, 2000);
+                }
+            }, 1000);
+        }
+
+        function attemptHack() {
+            const input = document.getElementById('hackInput').value.toUpperCase();
+            const message = document.getElementById('gameMessage');
+            
+            if (input === gameState.currentTarget) {
+                // Успешный взлом
+                clearInterval(gameState.timerInterval);
+                gameState.successfulHacks++;
+                gameState.xp += 20 * gameState.level;
+                gameState.hackAttempts = 0;
+                
+                message.textContent = '✅ Взлом успешен! Доступ получен.';
+                message.style.color = '#00ff00';
+                document.getElementById('hackTarget').classList.add('breached');
+                document.getElementById('hackCount').textContent = gameState.successfulHacks;
+                document.getElementById('totalHacks').textContent = gameState.successfulHacks;
+                
+                // Проверка достижений
+                checkAchievements();
+                
+                // Проверка уровня
+                if (gameState.xp >= 100) {
+                    gameState.level++;
+                    gameState.xp = 0;
+                    document.getElementById('gameLevel').textContent = gameState.level;
+                    message.textContent += ` 🎉 Новый уровень: ${gameState.level}!`;
+                }
+                
+                document.getElementById('gameXP').textContent = gameState.xp;
+                document.getElementById('progressBar').style.width = `${gameState.xp}%`;
+                
+                setTimeout(generateTarget, 2000);
+            } else {
+                // Неудачная попытка
+                gameState.hackAttempts++;
+                message.textContent = `❌ Неверный код! Попыток: ${gameState.hackAttempts}/3`;
+                message.style.color = '#ff4444';
+                
+                if (gameState.hackAttempts >= 3) {
+                    message.textContent = '🚨 Тревога! Обнаружена активность взлома.';
+                    setTimeout(generateTarget, 2000);
+                }
+            }
+            
+            document.getElementById('hackInput').value = '';
+        }
+
+        function skipTarget() {
+            clearInterval(gameState.timerInterval);
+            document.getElementById('gameMessage').textContent = '🔄 Поиск новой цели...';
+            setTimeout(generateTarget, 1000);
+        }
+
+        function checkAchievements() {
+            if (gameState.successfulHacks === 1) {
+                document.getElementById('achFirstHack').classList.add('unlocked');
+            }
+            if (gameState.successfulHacks >= 10) {
+                document.getElementById('achMasterHacker').classList.add('unlocked');
+            }
+            if (gameState.level >= 5) {
+                document.getElementById('achOsintPro').classList.add('unlocked');
+            }
+        }
+
+        // Проверка сложности пароля
+        document.getElementById('passwordInput').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthBar = document.getElementById('passwordStrength');
+            const feedback = document.getElementById('passwordFeedback');
+            
+            let strength = 0;
+            let feedbackText = '';
+            
+            if (password.length >= 8) strength += 25;
+            if (/[A-Z]/.test(password)) strength += 25;
+            if (/[0-9]/.test(password)) strength += 25;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+            
+            strengthBar.className = 'password-strength ';
+            if (strength <= 25) {
+                strengthBar.classList.add('strength-weak');
+                feedbackText = 'Слабый пароль';
+            } else if (strength <= 50) {
+                strengthBar.classList.add('strength-medium');
+                feedbackText = 'Средний пароль';
+            } else if (strength <= 75) {
+                strengthBar.classList.add('strength-strong');
+                feedbackText = 'Сильный пароль';
+            } else {
+                strengthBar.classList.add('strength-very-strong');
+                feedbackText = 'Очень сильный пароль';
+            }
+            
+            feedback.textContent = feedbackText;
+        });
+
+        // Случайные мемы
+        const memes = [
+            "Когда находишь нужную информацию в первых результатах поиска",
+            "OSINT специалист, видящий геолокацию по отражению в глазах",
+            "Когда 'забыл пароль' работает лучше любого взлома",
+            "Твой цифровой след: *существует* | Я: 👁️👄👁️",
+            "Google Dorks - легальные читы к интернету"
+        ];
+
+        function showRandomMeme() {
+            const randomMeme = memes[Math.floor(Math.random() * memes.length)];
+            document.getElementById('memeText').textContent = `"${randomMeme}"`;
+        }
+
+        // Мини-уроки
+        const lessons = [
+            {
+                title: "Основы OSINT",
+                content: "OSINT (Open Source Intelligence) - сбор информации из открытых источников. 90% нужной информации можно найти легально."
+            },
+            {
+                title: "Google Dorks",
+                content: "Специальные поисковые операторы Google для точного поиска: site:, filetype:, intitle:, и другие."
+            },
+            {
+                title: "Социальные сети",
+                content: "Соцсети - золотая жила информации. Метаданные, геотеги, связи между людьми."
+            }
+        ];
+
+        let currentLesson = 0;
+
+        function nextLesson() {
+            currentLesson = (currentLesson + 1) % lessons.length;
+            const lesson = lessons[currentLesson];
+            document.getElementById('currentLesson').innerHTML = `
+                <h4>${lesson.title}</h4>
+                <p>${lesson.content}</p>
+                <button class="hack-btn" onclick="nextLesson()">Следующий урок</button>
+            `;
+        }
+
+        // PWA Установка
+        let deferredPrompt;
+        const installButton = document.getElementById('installButton');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.style.display = 'block';
+        });
+
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installButton.textContent = '✅ Установлено!';
+                    installButton.disabled = true;
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        // Инициализация игры
+        generateTarget();
+
+        // Анимированные иконки
+        const icons = document.querySelectorAll('.skill-icon');
+        icons.forEach(icon => {
+            icon.addEventListener('mouseenter', () => {
+                icon.style.transform = 'scale(1.2) rotate(10deg)';
+            });
+            icon.addEventListener('mouseleave', () => {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+    </script>
+</body>
+</html>
