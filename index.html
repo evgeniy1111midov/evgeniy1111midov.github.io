@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OSINT.HUB - Профессиональная платформа</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,169 +13,206 @@
         }
 
         :root {
-            --primary: #00ff88;
-            --secondary: #0088ff;
-            --accent: #ff0088;
-            --bg: #0a0a0a;
-            --card-bg: #1a1a1a;
-            --text: #00ff88;
-            --text-secondary: #00aaff;
-            --border: #00ff88;
-            --success: #00ff88;
-            --warning: #ffff00;
-            --error: #ff4444;
-            --terminal: #00ff88;
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary: #8b5cf6;
+            --accent: #06d6a0;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --card-border: rgba(99, 102, 241, 0.3);
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --online: #10b981;
+            --offline: #64748b;
+        }
+
+        [data-theme="light"] {
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-border: rgba(226, 232, 240, 0.8);
+            --text: #1e293b;
+            --text-secondary: #64748b;
         }
 
         body {
-            font-family: 'Courier New', monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(0, 136, 255, 0.05) 0%, transparent 20%);
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.1) 0%, transparent 25%);
+            transition: all 0.3s ease;
         }
 
-        /* Эффекты */
-        .scan-line {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            animation: scan 3s linear infinite;
-            z-index: 9999;
-            pointer-events: none;
-        }
-
-        @keyframes scan {
-            0% { top: 0%; opacity: 0; }
-            50% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        .glitch-text {
-            text-shadow: 2px 2px 0px var(--accent), -2px -2px 0px var(--secondary);
-            animation: glitch 5s infinite;
-        }
-
-        @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            10% { transform: translate(-2px, -2px); }
-            20% { transform: translate(2px, 2px); }
-            30% { transform: translate(-2px, 2px); }
-            40% { transform: translate(2px, -2px); }
+        /* Glass morphism эффекты */
+        .glass {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         /* Навигация */
         .navbar {
-            background: rgba(10, 10, 10, 0.9);
-            border-bottom: 1px solid var(--border);
-            padding: 0 20px;
             position: fixed;
             top: 0;
-            width: 100%;
-            z-index: 1000;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 70px;
-            backdrop-filter: blur(10px);
+            padding: 0 2rem;
+            z-index: 1000;
         }
 
         .nav-brand {
-            font-size: 1.8rem;
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--primary);
             text-decoration: none;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 10px var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .nav-links {
             display: flex;
-            gap: 15px;
+            gap: 1.5rem;
+            align-items: center;
         }
 
         .nav-link {
             color: var(--text);
             text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
             transition: all 0.3s ease;
-            border: 1px solid transparent;
-            font-family: 'Courier New', monospace;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
         }
 
         .nav-link:hover, .nav-link.active {
-            background: var(--primary);
-            color: var(--bg);
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
         }
 
-        .nav-auth {
+        .nav-actions {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .language-selector {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
         }
 
         .auth-btn {
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
             transition: all 0.3s ease;
-            font-family: 'Courier New', monospace;
-            border: 1px solid var(--border);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
         }
 
         .btn-login {
             background: transparent;
             color: var(--text);
+            border: 1px solid var(--card-border);
         }
 
         .btn-register {
             background: var(--primary);
-            color: var(--bg);
+            color: white;
         }
 
         .auth-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
 
         /* Основной контент */
         .container {
-            max-width: 1400px;
-            margin: 90px auto 20px;
-            padding: 0 20px;
+            max-width: 1200px;
+            margin: 90px auto 2rem;
+            padding: 0 2rem;
         }
 
         .page {
             display: none;
-            animation: fadeIn 0.5s ease-in;
+            animation: fadeInUp 0.6s ease;
         }
 
         .page.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Карточки */
         .card {
             background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
         }
@@ -185,413 +221,507 @@
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .card:hover::before {
-            left: 100%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 15px;
+            margin-bottom: 1.5rem;
         }
 
         .card-title {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        /* Формы */
-        .auth-form {
-            max-width: 450px;
-            margin: 50px auto;
-            background: var(--card-bg);
-            padding: 40px;
+        /* Профиль пользователя - Telegram стиль */
+        .profile-header {
+            position: relative;
+            margin-bottom: 2rem;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .profile-banner {
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            position: relative;
+        }
+
+        .profile-info {
+            position: relative;
+            padding: 0 2rem 2rem;
+            margin-top: -60px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--card-bg);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .creator-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 2px solid var(--card-bg);
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-bio {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
-            border: 1px solid var(--border);
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--card-border);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Чат сообщества */
+        .chat-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            height: 600px;
+        }
+
+        .chat-sidebar {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-users {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .user-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--online);
+        }
+
+        .user-status.offline {
+            background: var(--offline);
+        }
+
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 1rem 1.25rem;
+            border-radius: 18px;
+            position: relative;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.received {
+            background: rgba(59, 130, 246, 0.1);
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+        }
+
+        .message.sent {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+
+        .message-input-container {
+            padding: 1.5rem;
+            border-top: 1px solid var(--card-border);
+            background: var(--card-bg);
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--card-border);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* База знаний */
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .knowledge-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .knowledge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .knowledge-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .knowledge-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .knowledge-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .knowledge-progress {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Модальные окна */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--error);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .auth-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
         }
 
         .form-group {
-            margin-bottom: 20px;
-            position: relative;
+            margin-bottom: 1.5rem;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
             color: var(--text);
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
+            font-weight: 500;
         }
 
         .form-input {
             width: 100%;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text);
-            font-size: 16px;
-            font-family: 'Courier New', monospace;
+            font-size: 1rem;
             transition: all 0.3s ease;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
-            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .btn {
-            padding: 15px 30px;
+            padding: 1rem 2rem;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
-            text-align: center;
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: var(--bg);
-            border: 1px solid var(--primary);
+            background: var(--primary);
+            color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.4);
-            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
 
-        /* Сетки */
-        .grid {
-            display: grid;
-            gap: 25px;
-        }
-
-        .grid-2 {
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        }
-
-        .grid-3 {
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        }
-
-        /* Профиль */
-        .profile-header {
-            text-align: center;
-            padding: 50px 0;
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 136, 255, 0.1));
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border);
-        }
-
-        .profile-avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            margin: 0 auto 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            color: var(--bg);
-            border: 3px solid var(--primary);
-            box-shadow: 0 0 30px var(--primary);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin: 40px 0;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.2);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary);
-        }
-
-        /* Чат */
-        .chat-container {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 25px;
-            height: 700px;
-        }
-
-        .chat-users {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 25px;
-            border: 1px solid var(--border);
-            overflow-y: auto;
-        }
-
-        .chat-messages {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 25px;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .messages-area {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 25px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .message {
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid var(--border);
-            animation: messageAppear 0.3s ease;
-        }
-
-        @keyframes messageAppear {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message-self {
-            background: rgba(0, 136, 255, 0.2);
-            margin-left: 20%;
-            border-color: var(--secondary);
-        }
-
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .message-input {
-            display: flex;
-            gap: 15px;
-        }
-
-        /* Игра */
-        .hack-game {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 30px;
-            margin: 25px 0;
-            border: 1px solid var(--border);
-            text-align: center;
-        }
-
-        .game-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-
-        .hack-progress {
+        .btn-block {
             width: 100%;
-            height: 15px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            margin: 20px 0;
-            overflow: hidden;
-            border: 1px solid var(--border);
         }
 
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%;
-            transition: width 0.5s ease;
+        /* Утилиты */
+        .hidden {
+            display: none !important;
         }
 
-        .hack-target {
-            font-family: 'Courier New', monospace;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-size: 1.3rem;
-            letter-spacing: 3px;
-            border: 1px solid var(--border);
-            border-left: 5px solid var(--primary);
-        }
-
-        .hack-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid var(--primary);
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: var(--text);
-            font-family: 'Courier New', monospace;
+        .text-center {
             text-align: center;
-            font-size: 1.2rem;
-            margin: 15px 0;
         }
 
-        .hack-btn {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: var(--bg);
-            border: none;
-            padding: 15px 35px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin: 10px;
-            transition: all 0.3s ease;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
+        .mt-4 {
+            margin-top: 2rem;
         }
 
-        .hack-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px var(--primary);
+        .mb-4 {
+            margin-bottom: 2rem;
         }
 
-        /* Модальные окна */
-        .modal {
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
+        .error {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
         }
 
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 40px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 50px rgba(0, 255, 136, 0.3);
-        }
-
-        .close {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .close:hover {
-            color: var(--accent);
-            transform: scale(1.1);
-        }
-
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .auth-tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .auth-tab.active {
-            border-bottom-color: var(--primary);
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary);
-        }
-
-        .auth-page {
-            display: none;
-        }
-
-        .auth-page.active {
-            display: block;
+        .success {
+            color: var(--success);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
         }
 
         /* Адаптивность */
         @media (max-width: 768px) {
             .navbar {
-                padding: 0 10px;
-                flex-wrap: wrap;
-                height: auto;
-                padding: 10px;
+                padding: 0 1rem;
             }
 
             .nav-links {
-                order: 3;
-                width: 100%;
-                justify-content: center;
-                margin-top: 10px;
-                flex-wrap: wrap;
+                display: none;
             }
 
-            .nav-auth {
-                order: 2;
+            .container {
+                margin-top: 80px;
+                padding: 0 1rem;
             }
 
             .chat-container {
@@ -599,208 +729,162 @@
                 height: auto;
             }
 
-            .grid-2, .grid-3 {
+            .knowledge-grid {
                 grid-template-columns: 1fr;
             }
 
-            .container {
-                margin-top: 120px;
-                padding: 0 10px;
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .profile-avatar {
-                width: 100px;
-                height: 100px;
-                font-size: 35px;
+            .message {
+                max-width: 85%;
             }
-        }
-
-        /* Утилиты */
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .mb-20 { margin-bottom: 20px; }
-        .mt-20 { margin-top: 20px; }
-        .p-20 { padding: 20px; }
-        .hidden { display: none; }
-        .error { 
-            color: var(--error); 
-            font-size: 14px; 
-            margin-top: 8px; 
-            text-shadow: 0 0 5px var(--error);
-        }
-        .success { 
-            color: var(--success); 
-            font-size: 14px; 
-            margin-top: 8px;
-            text-shadow: 0 0 5px var(--success);
-        }
-
-        /* Терминальный стиль */
-        .terminal {
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            color: var(--terminal);
-            border-left: 5px solid var(--primary);
-        }
-
-        .terminal-line {
-            margin: 8px 0;
-            opacity: 0;
-            animation: typeWrite 0.5s ease forwards;
-        }
-
-        @keyframes typeWrite {
-            to { opacity: 1; }
-        }
-
-        .blink {
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <!-- Эффекты -->
-    <div class="scan-line"></div>
-
     <!-- Навигация -->
-    <nav class="navbar">
-        <a href="#" class="nav-brand glitch-text">OSINT.HUB</a>
+    <nav class="navbar glass">
+        <a href="#" class="nav-brand">
+            <i class="fas fa-search"></i>
+            OSINT.HUB
+        </a>
+
         <div class="nav-links">
-            <a href="#" class="nav-link active" onclick="showPage('home')">ГЛАВНАЯ</a>
-            <a href="#" class="nav-link" onclick="showPage('community')">СООБЩЕСТВО</a>
-            <a href="#" class="nav-link" onclick="showPage('knowledge')">БАЗА ЗНАНИЙ</a>
-            <a href="#" class="nav-link" onclick="showPage('tools')">ИНСТРУМЕНТЫ</a>
-            <a href="#" class="nav-link" onclick="showPage('profile')">ПРОФИЛЬ</a>
-            <a href="#" class="nav-link" onclick="showPage('creator')">СОЗДАТЕЛЬ</a>
+            <a href="#" class="nav-link active" onclick="showPage('home')">
+                <i class="fas fa-home"></i>
+                Главная
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('community')">
+                <i class="fas fa-users"></i>
+                Сообщество
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('knowledge')">
+                <i class="fas fa-graduation-cap"></i>
+                База знаний
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('tools')">
+                <i class="fas fa-tools"></i>
+                Инструменты
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('profile')">
+                <i class="fas fa-user"></i>
+                Профиль
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('creator')">
+                <i class="fas fa-code"></i>
+                Создатель
+            </a>
         </div>
-        <div class="nav-auth" id="authButtons">
-            <a href="#" class="auth-btn btn-login" onclick="showAuthModal()">ВОЙТИ</a>
-            <a href="#" class="auth-btn btn-register" onclick="showAuthModal()">РЕГИСТРАЦИЯ</a>
-        </div>
-        <div class="nav-auth hidden" id="userMenu">
-            <span id="userName" class="auth-btn btn-login"></span>
-            <a href="#" class="auth-btn btn-login" onclick="logout()">ВЫЙТИ</a>
+
+        <div class="nav-actions">
+            <select class="language-selector" id="languageSelect">
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="uk">🇺🇦 Українська</option>
+                <option value="en">🇺🇸 English</option>
+            </select>
+
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+
+            <div id="authButtons">
+                <button class="auth-btn btn-login" onclick="showAuthModal('login')">
+                    Войти
+                </button>
+                <button class="auth-btn btn-register" onclick="showAuthModal('register')">
+                    Регистрация
+                </button>
+            </div>
+
+            <div id="userMenu" class="hidden">
+                <span id="userName" class="auth-btn btn-login"></span>
+                <button class="auth-btn btn-login" onclick="logout()">
+                    Выйти
+                </button>
+            </div>
         </div>
     </nav>
 
     <!-- Основной контент -->
     <div class="container">
-        <!-- Главная -->
+        <!-- Главная страница -->
         <div id="home" class="page active">
-            <div class="card">
+            <div class="card glass">
                 <div class="card-header">
-                    <h1 class="card-title glitch-text">OSINT.HUB - ПРОФЕССИОНАЛЬНАЯ ПЛАТФОРМА</h1>
+                    <h1 class="card-title">
+                        <i class="fas fa-search"></i>
+                        Добро пожаловать в OSINT.HUB
+                    </h1>
                 </div>
-                <p>Сообщество исследователей и специалистов по открытым источникам. Тренируй навыки, общайся с экспертами, развивайся!</p>
+                <p>Профессиональная платформа для исследователей и специалистов по открытым источникам. Развивайте навыки, общайтесь с сообществом, становитесь экспертом!</p>
             </div>
 
-            <div class="grid grid-2">
-                <div class="card">
-                    <h3 class="card-title">📊 СТАТИСТИКА ПЛАТФОРМЫ</h3>
+            <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div class="card glass">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-line"></i>
+                        Статистика платформы
+                    </h3>
                     <div class="profile-stats">
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalUsers">1,847</div>
-                            <div>ПОЛЬЗОВАТЕЛЕЙ</div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalUsers">0</div>
+                            <div class="stat-label">Пользователей</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="activeCases">156</div>
-                            <div>АКТИВНЫХ КЕЙСОВ</div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="activeUsers">0</div>
+                            <div class="stat-label">Онлайн</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalMessages">0</div>
+                            <div class="stat-label">Сообщений</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <h3 class="card-title">🎮 OSINT SIMULATOR</h3>
-                    <p>Тренируй навыки расследования в безопасной среде. Решай реальные кейсы, получай опыт!</p>
-                    <button class="btn btn-primary mt-20" onclick="startTraining()">НАЧАТЬ ТРЕНИРОВКУ</button>
-                </div>
-            </div>
-
-            <!-- Мини-игра на главной -->
-            <div class="hack-game">
-                <h3 class="card-title">🔓 БЫСТРЫЙ ВЗЛОМ</h3>
-                <div class="game-stats">
-                    <span>Уровень: <span id="gameLevel">1</span></span>
-                    <span>Опыт: <span id="gameXP">0</span>/100</span>
-                    <span>Взломов: <span id="gameHacks">0</span></span>
-                </div>
-                <div class="hack-progress">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-                <div class="hack-target" id="hackTarget">ЗАГРУЗКА ЦЕЛИ...</div>
-                <input type="text" class="hack-input" id="hackInput" placeholder="ВВЕДИТЕ КОД ВЗЛОМА..." maxlength="20">
-                <div>
-                    <button class="hack-btn" onclick="attemptHack()">ВЗЛОМАТЬ</button>
-                    <button class="hack-btn" onclick="generateNewCode()">НОВАЯ ЦЕЛЬ</button>
-                </div>
-                <div class="game-message" id="gameMessage"></div>
-            </div>
-
-            <div class="card">
-                <h3 class="card-title">🔥 АКТИВНОСТЬ СООБЩЕСТВА</h3>
-                <div class="terminal">
-                    <div class="terminal-line">> User123 завершил кейс "Поиск пропавшего человека"</div>
-                    <div class="terminal-line">> CyberDetective поделился методом анализа метаданных</div>
-                    <div class="terminal-line">> GhostProtocol получил достижение "Мастер анонимности"</div>
-                    <div class="terminal-line">> SYSTEM: Добро пожаловать в OSINT.HUB<span class="blink">_</span></div>
+                <div class="card glass">
+                    <h3 class="card-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        Обучение OSINT
+                    </h3>
+                    <p>Освойте методы работы с открытыми источниками через интерактивные уроки и практические задания.</p>
+                    <button class="btn btn-primary mt-4" onclick="showPage('knowledge')">
+                        Начать обучение
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Сообщество -->
         <div id="community" class="page">
-            <div class="card">
-                <h1 class="card-title glitch-text">💬 СООБЩЕСТВО</h1>
-                <p>Общайтесь с другими исследователями, делитесь опытом и работайте вместе над расследованиями</p>
+            <div class="card glass">
+                <h1 class="card-title">
+                    <i class="fas fa-users"></i>
+                    Сообщество
+                </h1>
+                <p>Общайтесь с другими исследователями, делитесь опытом и работайте вместе над проектами.</p>
             </div>
 
             <div class="chat-container">
-                <div class="chat-users">
-                    <h4>👥 ОНЛАЙН ПОЛЬЗОВАТЕЛИ</h4>
-                    <div id="onlineUsers">
-                        <div class="user-item">🟢 User123 (OSINT)</div>
-                        <div class="user-item">🟢 CyberDetective (Анализ)</div>
-                        <div class="user-item">🟢 GhostProtocol (OPSEC)</div>
-                        <div class="user-item">🟡 DataHunter (Данные)</div>
+                <div class="chat-sidebar glass">
+                    <h3 style="margin-bottom: 1rem;">Онлайн пользователи</h3>
+                    <div class="chat-users" id="onlineUsers">
+                        <!-- Список пользователей будет здесь -->
                     </div>
                 </div>
 
-                <div class="chat-messages">
-                    <div class="messages-area" id="chatMessages">
-                        <div class="message">
-                            <div class="message-header">
-                                <strong>User123</strong>
-                                <span>12:30</span>
-                            </div>
-                            Кто-нибудь работал с геолокацией по EXIF данным?
-                        </div>
-                        <div class="message">
-                            <div class="message-header">
-                                <strong>CyberDetective</strong>
-                                <span>12:32</span>
-                            </div>
-                            Рекомендую exifdata.com и metapicz.com - отличные инструменты
-                        </div>
-                        <div class="message message-self">
-                            <div class="message-header">
-                                <strong>Вы</strong>
-                                <span>12:33</span>
-                            </div>
-                            Спасибо! Попробую сегодня вечером
-                        </div>
+                <div class="chat-main glass">
+                    <div class="messages-container" id="messagesContainer">
+                        <!-- Сообщения будут здесь -->
                     </div>
-                    <div class="message-input">
-                        <input type="text" class="form-input" id="messageInput" placeholder="Введите ваше сообщение...">
-                        <button class="btn btn-primary" onclick="sendMessage()">ОТПРАВИТЬ</button>
+                    <div class="message-input-container">
+                        <textarea 
+                            class="message-input" 
+                            id="messageInput" 
+                            placeholder="Введите сообщение..."
+                            rows="1"
+                        ></textarea>
                     </div>
                 </div>
             </div>
@@ -808,317 +892,310 @@
 
         <!-- База знаний -->
         <div id="knowledge" class="page">
-            <div class="card">
-                <h1 class="card-title glitch-text">📚 БАЗА ЗНАНИЙ</h1>
-                <p>Изучайте методы, техники и лучшие практики работы с открытыми источниками</p>
+            <div class="card glass">
+                <h1 class="card-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    База знаний
+                </h1>
+                <p>Изучайте методы, техники и лучшие практики работы с открытыми источниками.</p>
             </div>
 
-            <div class="grid grid-3">
-                <div class="card">
-                    <h3>🔍 OSINT FUNDAMENTALS</h3>
-                    <div class="terminal">
-                        <div class="terminal-line">> Основы поиска информации</div>
-                        <div class="terminal-line">> Работа с социальными сетями</div>
-                        <div class="terminal-line">> Анализ цифрового следа</div>
-                        <div class="terminal-line">> Методы верификации</div>
-                    </div>
-                    <button class="btn btn-primary mt-20">ИЗУЧИТЬ</button>
-                </div>
-
-                <div class="card">
-                    <h3>🕵️ ДОКСИНГ МЕТОДИКИ</h3>
-                    <div class="terminal">
-                        <div class="terminal-line">> Этические основы</div>
-                        <div class="terminal-line">> Сбор информации</div>
-                        <div class="terminal-line">> Верификация данных</div>
-                        <div class="terminal-line">> Анализ связей</div>
-                    </div>
-                    <button class="btn btn-primary mt-20">ИЗУЧИТЬ</button>
-                </div>
-
-                <div class="card">
-                    <h3>👻 АНОНИМИЗАЦИЯ</h3>
-                    <div class="terminal">
-                        <div class="terminal-line">> VPN и прокси</div>
-                        <div class="terminal-line">> Безопасные ОС</div>
-                        <div class="terminal-line">> Криптография</div>
-                        <div class="terminal-line">> OPSEC практики</div>
-                    </div>
-                    <button class="btn btn-primary mt-20">ИЗУЧИТЬ</button>
-                </div>
+            <div class="knowledge-grid">
+                <!-- Карточки знаний будут здесь -->
             </div>
         </div>
 
         <!-- Инструменты -->
         <div id="tools" class="page">
-            <div class="card">
-                <h1 class="card-title glitch-text">🛠️ ИНСТРУМЕНТЫ</h1>
-                <p>Полезные инструменты для вашей исследовательской работы</p>
+            <div class="card glass">
+                <h1 class="card-title">
+                    <i class="fas fa-tools"></i>
+                    Инструменты
+                </h1>
+                <p>Полезные инструменты для вашей исследовательской работы.</p>
             </div>
 
-            <div class="grid grid-2">
-                <div class="card">
-                    <h3>🔐 ГЕНЕРАТОР ЛЕГЕНД</h3>
-                    <p>Создайте правдоподобную легенду для оперативной работы</p>
-                    <button class="btn btn-primary mt-20" onclick="generateLegend()">СГЕНЕРИРОВАТЬ</button>
-                    <div id="legendOutput" class="terminal mt-20"></div>
+            <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div class="card glass">
+                    <h3>Генератор легенд</h3>
+                    <p>Создайте правдоподобную легенду для оперативной работы.</p>
+                    <button class="btn btn-primary mt-4" onclick="generateLegend()">
+                        Сгенерировать
+                    </button>
                 </div>
 
-                <div class="card">
-                    <h3>📧 ПРОВЕРКА УТЕЧЕК</h3>
-                    <p>Проверьте, не фигурирует ли ваш email в утечках данных</p>
-                    <input type="email" class="form-input mt-20" id="emailCheck" placeholder="ВАШ EMAIL">
-                    <button class="btn btn-primary mt-20" onclick="checkBreaches()">ПРОВЕРИТЬ</button>
-                    <div id="breachResult" class="terminal mt-20"></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>🔧 ДОПОЛНИТЕЛЬНЫЕ ИНСТРУМЕНТЫ</h3>
-                <div class="grid grid-3">
-                    <button class="btn btn-primary" onclick="showTool('password')">ГЕНЕРАТОР ПАРОЛЕЙ</button>
-                    <button class="btn btn-primary" onclick="showTool('metadata')">АНАЛИЗ МЕТАДАННЫХ</button>
-                    <button class="btn btn-primary" onclick="showTool('network')">ПРОВЕРКА СЕТИ</button>
+                <div class="card glass">
+                    <h3>Проверка утечек</h3>
+                    <p>Проверьте, не фигурирует ли ваш email в утечках данных.</p>
+                    <input type="email" class="form-input mt-4" id="emailCheck" placeholder="Ваш email">
+                    <button class="btn btn-primary mt-4" onclick="checkBreaches()">
+                        Проверить
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Профиль -->
         <div id="profile" class="page">
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <i class="fas fa-user-secret"></i>
+            <div class="profile-header glass">
+                <div class="profile-banner"></div>
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                        <div class="creator-badge hidden" id="creatorBadge">Создатель</div>
+                    </div>
+                    <h1 class="profile-name" id="profileName">Гость</h1>
+                    <p class="profile-bio" id="profileBio">Неавторизованный пользователь</p>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="profileLevel">0</div>
+                            <div class="stat-label">Уровень</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="profileReputation">0</div>
+                            <div class="stat-label">Репутация</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="profileCompleted">0</div>
+                            <div class="stat-label">Завершено уроков</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="profileMessages">0</div>
+                            <div class="stat-label">Сообщений</div>
+                        </div>
+                    </div>
                 </div>
-                <h1 id="profileUsername">ГОСТЬ</h1>
-                <p id="profileRole">НЕАВТОРИЗОВАННЫЙ ПОЛЬЗОВАТЕЛЬ</p>
             </div>
 
-            <div class="profile-stats">
-                <div class="stat-card">
-                    <div class="stat-number" id="profileLevel">1</div>
-                    <div>УРОВЕНЬ</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="profileCases">0</div>
-                    <div>ЗАВЕРШЕННЫХ КЕЙСОВ</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="profileReputation">0</div>
-                    <div>РЕПУТАЦИЯ</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="profileHacks">0</div>
-                    <div>УСПЕШНЫХ ВЗЛОМОВ</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 class="card-title">📋 ИНФОРМАЦИЯ О СЕБЕ</h3>
+            <div class="card glass">
+                <h3 class="card-title">Информация о себе</h3>
                 <div class="form-group">
-                    <label class="form-label">СПЕЦИАЛИЗАЦИЯ</label>
+                    <label class="form-label">Специализация</label>
                     <select class="form-input" id="userSpecialization">
                         <option value="osint">OSINT</option>
-                        <option value="doxing">ДОКСИНГ</option>
-                        <option value="opsec">OPSEC</option>
-                        <option value="analysis">АНАЛИЗ</option>
+                        <option value="analysis">Анализ данных</option>
+                        <option value="security">Безопасность</option>
+                        <option value="research">Исследования</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">ОПЫТ</label>
+                    <label class="form-label">Уровень опыта</label>
                     <select class="form-input" id="userExperience">
-                        <option value="beginner">НАЧИНАЮЩИЙ</option>
-                        <option value="intermediate">ОПЫТНЫЙ</option>
-                        <option value="expert">ЭКСПЕРТ</option>
+                        <option value="beginner">Начинающий</option>
+                        <option value="intermediate">Опытный</option>
+                        <option value="expert">Эксперт</option>
                     </select>
                 </div>
-                <button class="btn btn-primary" onclick="saveProfile()">СОХРАНИТЬ ПРОФИЛЬ</button>
-            </div>
-
-            <div class="card">
-                <h3 class="card-title">🏆 ДОСТИЖЕНИЯ</h3>
-                <div class="grid grid-3">
-                    <div class="stat-card">
-                        <div>🔓</div>
-                        <div>ПЕРВЫЙ ВЗЛОМ</div>
-                    </div>
-                    <div class="stat-card">
-                        <div>💻</div>
-                        <div>МАСТЕР OSINT</div>
-                    </div>
-                    <div class="stat-card">
-                        <div>⚡</div>
-                        <div>СПИДРАННЕР</div>
-                    </div>
-                </div>
+                <button class="btn btn-primary" onclick="saveProfile()">
+                    Сохранить профиль
+                </button>
             </div>
         </div>
 
         <!-- Создатель -->
         <div id="creator" class="page">
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <i class="fas fa-code"></i>
-                </div>
-                <h1>СОЗДАТЕЛЬ ПЛАТФОРМЫ</h1>
-                <p>РАЗРАБОТЧИК И ИССЛЕДОВАТЕЛЬ</p>
-            </div>
-
-            <div class="grid grid-2">
-                <div class="card">
-                    <h3 class="card-title">👨‍💻 О СОЗДАТЕЛЕ</h3>
-                    <div class="terminal">
-                        <div class="terminal-line">> Специалист в области OSINT</div>
-                        <div class="terminal-line">> Опыт работы: 5+ лет</div>
-                        <div class="terminal-line">> Эксперт по кибербезопасности</div>
-                        <div class="terminal-line">> Создатель OSINT.HUB</div>
+            <div class="profile-header glass">
+                <div class="profile-banner"></div>
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                        <i class="fas fa-code"></i>
+                        <div class="creator-badge">Создатель</div>
                     </div>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title">🌐 КОНТАКТЫ</h3>
-                    <div class="p-20">
-                        <a href="https://t.me/psycho_midov" class="btn btn-primary" style="display: block; margin-bottom: 15px; text-align: center;">
-                            <i class="fab fa-telegram"></i> TELEGRAM: @PSYCHO_MIDOV
-                        </a>
-                        <a href="https://www.tiktok.com/@Medovikov_smertniy" class="btn btn-primary" style="display: block; text-align: center;">
-                            <i class="fab fa-tiktok"></i> TIKTOK: MEDOVIKOV_SMERTNIY
-                        </a>
+                    <h1 class="profile-name">Evgeniy Midov</h1>
+                    <p class="profile-bio">Создатель OSINT.HUB и проекта OSINT.EXE</p>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">Уровень</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">999</div>
+                            <div class="stat-label">Репутация</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">OSINT.EXE</div>
+                            <div class="stat-label">Проект</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <h3 class="card-title">🎯 ДРУГИЕ ПРОЕКТЫ</h3>
-                <div class="terminal">
-                    <div class="terminal-line">> OSINT.EXE - Симулятор расследований</div>
-                    <div class="terminal-line">> CyberRange - Тренировочная площадка</div>
-                    <div class="terminal-line">> DataHunter - Инструмент анализа данных</div>
-                    <div class="terminal-line">> GhostNetwork - Анонимная сеть</div>
+            <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div class="card glass">
+                    <h3 class="card-title">
+                        <i class="fas fa-user"></i>
+                        О создателе
+                    </h3>
+                    <p>Специалист в области OSINT и кибербезопасности с более чем 5-летним опытом. Создатель платформы OSINT.HUB и проекта OSINT.EXE.</p>
+                </div>
+
+                <div class="card glass">
+                    <h3 class="card-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Проект OSINT.EXE
+                    </h3>
+                    <p>Инновационный проект в области анализа открытых источников, предоставляющий инструменты для профессиональных исследователей.</p>
+                </div>
+
+                <div class="card glass">
+                    <h3 class="card-title">
+                        <i class="fas fa-envelope"></i>
+                        Контакты
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <a href="https://t.me/psycho_midov" class="btn btn-primary" style="text-align: center;">
+                            <i class="fab fa-telegram"></i>
+                            Telegram: @psycho_midov
+                        </a>
+                        <a href="https://www.tiktok.com/@Medovikov_smertniy" class="btn btn-primary" style="text-align: center;">
+                            <i class="fab fa-tiktok"></i>
+                            TikTok: Medovikov_smertniy
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Модальное окно авторизации -->
-    <div id="authModal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close" onclick="closeAuthModal()">&times;</span>
-            
+    <div id="authModal" class="modal">
+        <div class="modal-content glass">
+            <button class="close-modal" onclick="closeAuthModal()">
+                <i class="fas fa-times"></i>
+            </button>
+
             <div class="auth-tabs">
-                <div class="auth-tab active" onclick="showAuthTab('login')">ВХОД</div>
-                <div class="auth-tab" onclick="showAuthTab('register')">РЕГИСТРАЦИЯ</div>
+                <div class="auth-tab active" onclick="showAuthTab('login')">Вход</div>
+                <div class="auth-tab" onclick="showAuthTab('register')">Регистрация</div>
             </div>
 
             <!-- Форма входа -->
-            <div id="loginPage" class="auth-page active">
-                <h2 class="text-center glitch-text">ВХОД В СИСТЕМУ</h2>
-                <form id="loginForm">
+            <div id="loginForm" class="auth-form active">
+                <h2 style="margin-bottom: 2rem; text-align: center;">Вход в аккаунт</h2>
+                <form onsubmit="handleLogin(event)">
                     <div class="form-group">
-                        <label class="form-label">EMAIL</label>
+                        <label class="form-label">Email</label>
                         <input type="email" class="form-input" id="loginEmail" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">ПАРОЛЬ</label>
+                        <label class="form-label">Пароль</label>
                         <input type="password" class="form-input" id="loginPassword" required>
                     </div>
-                    <div id="loginError" class="error hidden"></div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">ВОЙТИ В СИСТЕМУ</button>
+                    <div id="loginError" class="error"></div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Войти
+                    </button>
                 </form>
             </div>
 
             <!-- Форма регистрации -->
-            <div id="registerPage" class="auth-page">
-                <h2 class="text-center glitch-text">РЕГИСТРАЦИЯ</h2>
-                <form id="registerForm">
+            <div id="registerForm" class="auth-form">
+                <h2 style="margin-bottom: 2rem; text-align: center;">Создание аккаунта</h2>
+                <form onsubmit="handleRegister(event)">
                     <div class="form-group">
-                        <label class="form-label">НИКНЕЙМ</label>
+                        <label class="form-label">Никнейм</label>
                         <input type="text" class="form-input" id="regUsername" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">EMAIL</label>
+                        <label class="form-label">Email</label>
                         <input type="email" class="form-input" id="regEmail" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">ПАРОЛЬ</label>
+                        <label class="form-label">Пароль</label>
                         <input type="password" class="form-input" id="regPassword" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">ПОДТВЕРЖДЕНИЕ ПАРОЛЯ</label>
+                        <label class="form-label">Подтверждение пароля</label>
                         <input type="password" class="form-input" id="regConfirmPassword" required>
                     </div>
-                    <div id="registerError" class="error hidden"></div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">СОЗДАТЬ АККАУНТ</button>
+                    <div id="registerError" class="error"></div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Зарегистрироваться
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== СИСТЕМА АУТЕНТИФИКАЦИИ ====================
+        // ==================== СИСТЕМА ДАННЫХ ====================
         let currentUser = null;
         let users = JSON.parse(localStorage.getItem('osint_users') || '{}');
         let messages = JSON.parse(localStorage.getItem('osint_messages') || '[]');
-        let gameState = {
-            level: 1,
-            xp: 0,
-            successfulHacks: 0,
-            currentTarget: '',
-            hackAttempts: 0
-        };
+        let knowledge = JSON.parse(localStorage.getItem('osint_knowledge') || '[]');
+        let settings = JSON.parse(localStorage.getItem('osint_settings') || '{}');
 
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                showPage('profile');
-                loadChatMessages();
+        // Создаем специальный аккаунт создателя
+        const CREATOR_EMAIL = 'evgeniymidov@gmail.com';
+        const CREATOR_USERNAME = 'Evgeniy Midov';
+
+        // Инициализация базы знаний
+        function initKnowledgeBase() {
+            if (knowledge.length === 0) {
+                knowledge = [
+                    {
+                        id: 'osint-basics',
+                        title: 'Основы OSINT',
+                        description: 'Изучите фундаментальные принципы работы с открытыми источниками информации.',
+                        icon: 'fas fa-search',
+                        progress: 0,
+                        category: 'fundamentals'
+                    },
+                    {
+                        id: 'social-media',
+                        title: 'Социальные сети',
+                        description: 'Методы поиска и анализа информации в социальных сетях.',
+                        icon: 'fas fa-share-alt',
+                        progress: 0,
+                        category: 'social'
+                    },
+                    {
+                        id: 'technical-analysis',
+                        title: 'Технический анализ',
+                        description: 'Работа с метаданными, EXIF данными и технической информацией.',
+                        icon: 'fas fa-code',
+                        progress: 0,
+                        category: 'technical'
+                    },
+                    {
+                        id: 'security',
+                        title: 'Безопасность',
+                        description: 'Принципы анонимности и безопасности при проведении расследований.',
+                        icon: 'fas fa-shield-alt',
+                        progress: 0,
+                        category: 'security'
+                    }
+                ];
+                localStorage.setItem('osint_knowledge', JSON.stringify(knowledge));
             }
-            updateUI();
-            initGame();
-            simulateOnlineUsers();
-        });
+        }
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            
-            document.getElementById(pageId).classList.add('active');
-            if (event) event.target.classList.add('active');
-            
-            if (pageId === 'community') {
-                loadChatMessages();
+        // Инициализация создателя
+        function initCreatorAccount() {
+            if (!users[CREATOR_EMAIL]) {
+                users[CREATOR_EMAIL] = {
+                    username: CREATOR_USERNAME,
+                    email: CREATOR_EMAIL,
+                    password: 'creator2024', // Можно поменять
+                    role: 'creator',
+                    level: 99,
+                    reputation: 999,
+                    specialization: 'osint',
+                    experience: 'expert',
+                    completedLessons: [],
+                    messagesCount: 0,
+                    registered: new Date().toISOString(),
+                    lastLogin: new Date().toISOString()
+                };
+                localStorage.setItem('osint_users', JSON.stringify(users));
             }
         }
 
-        function showAuthModal() {
-            document.getElementById('authModal').classList.remove('hidden');
-            showAuthTab('login');
-        }
-
-        function closeAuthModal() {
-            document.getElementById('authModal').classList.add('hidden');
-            clearErrors();
-        }
-
-        function showAuthTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.auth-page').forEach(p => p.classList.remove('active'));
-            
-            document.querySelector(`.auth-tab:nth-child(${tab === 'login' ? 1 : 2})`).classList.add('active');
-            document.getElementById(tab === 'login' ? 'loginPage' : 'registerPage').classList.add('active');
-            
-            clearErrors();
-        }
-
-        function clearErrors() {
-            document.getElementById('loginError').classList.add('hidden');
-            document.getElementById('registerError').classList.add('hidden');
-        }
-
-        // Обработка формы входа
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // ==================== СИСТЕМА АУТЕНТИФИКАЦИИ ====================
+        function handleLogin(event) {
+            event.preventDefault();
             
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -1126,20 +1203,19 @@
             
             if (users[email] && users[email].password === password) {
                 currentUser = users[email];
+                currentUser.lastLogin = new Date().toISOString();
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateUI();
                 closeAuthModal();
                 showPage('profile');
-                showSuccess('Успешный вход в систему!');
+                showNotification('Успешный вход в систему!', 'success');
             } else {
                 errorDiv.textContent = 'Неверный email или пароль!';
-                errorDiv.classList.remove('hidden');
             }
-        });
+        }
 
-        // Обработка формы регистрации
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        function handleRegister(event) {
+            event.preventDefault();
             
             const username = document.getElementById('regUsername').value;
             const email = document.getElementById('regEmail').value;
@@ -1150,108 +1226,172 @@
             // Валидация
             if (password !== confirmPassword) {
                 errorDiv.textContent = 'Пароли не совпадают!';
-                errorDiv.classList.remove('hidden');
                 return;
             }
             
             if (password.length < 6) {
                 errorDiv.textContent = 'Пароль должен содержать минимум 6 символов!';
-                errorDiv.classList.remove('hidden');
                 return;
             }
             
             if (username.length < 3) {
                 errorDiv.textContent = 'Никнейм должен содержать минимум 3 символа!';
-                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            // Проверка на уникальность ника создателя
+            if (username.toLowerCase() === CREATOR_USERNAME.toLowerCase()) {
+                errorDiv.textContent = 'Этот никнейм зарезервирован для создателя платформы!';
                 return;
             }
             
             if (users[email]) {
                 errorDiv.textContent = 'Пользователь с таким email уже существует!';
-                errorDiv.classList.remove('hidden');
                 return;
             }
             
             // Создаем пользователя
-            const user = {
+            users[email] = {
                 username: username,
                 email: email,
                 password: password,
+                role: 'user',
                 level: 1,
-                cases: 0,
                 reputation: 0,
-                hacks: 0,
                 specialization: 'osint',
                 experience: 'beginner',
+                completedLessons: [],
+                messagesCount: 0,
                 registered: new Date().toISOString(),
                 lastLogin: new Date().toISOString()
             };
             
-            // Сохраняем в базу
-            users[email] = user;
             localStorage.setItem('osint_users', JSON.stringify(users));
-            localStorage.setItem('currentUser', JSON.stringify(user));
+            localStorage.setItem('currentUser', JSON.stringify(users[email]));
             
-            currentUser = user;
+            currentUser = users[email];
             updateUI();
             closeAuthModal();
             showPage('profile');
             
-            showSuccess(`Добро пожаловать, ${username}! Регистрация прошла успешно!`);
-        });
+            showNotification(`Добро пожаловать, ${username}!`, 'success');
+        }
 
         function logout() {
             currentUser = null;
             localStorage.removeItem('currentUser');
             updateUI();
             showPage('home');
-            showSuccess('Вы вышли из системы');
+            showNotification('Вы вышли из системы', 'info');
+        }
+
+        // ==================== ИНТЕРФЕЙС ====================
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            if (event) event.target.classList.add('active');
+            
+            // Специальная логика для разных страниц
+            if (pageId === 'community') {
+                loadChatMessages();
+                updateOnlineUsers();
+            } else if (pageId === 'knowledge') {
+                loadKnowledgeBase();
+            } else if (pageId === 'profile') {
+                updateProfileStats();
+            }
+        }
+
+        function showAuthModal(type = 'login') {
+            document.getElementById('authModal').classList.add('active');
+            showAuthTab(type);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('registerError').textContent = '';
+        }
+
+        function showAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            
+            document.querySelector(`.auth-tab:nth-child(${tab === 'login' ? 1 : 2})`).classList.add('active');
+            document.getElementById(tab === 'login' ? 'loginForm' : 'registerForm').classList.add('active');
         }
 
         function updateUI() {
             const authButtons = document.getElementById('authButtons');
             const userMenu = document.getElementById('userMenu');
             const userName = document.getElementById('userName');
-            const profileUsername = document.getElementById('profileUsername');
-            const profileRole = document.getElementById('profileRole');
+            const profileName = document.getElementById('profileName');
+            const profileBio = document.getElementById('profileBio');
+            const creatorBadge = document.getElementById('creatorBadge');
             
             if (currentUser) {
                 authButtons.classList.add('hidden');
                 userMenu.classList.remove('hidden');
                 userName.textContent = currentUser.username;
-                profileUsername.textContent = currentUser.username;
-                profileRole.textContent = getRoleText(currentUser.experience);
+                profileName.textContent = currentUser.username;
+                profileBio.textContent = getRoleText(currentUser.experience);
                 
-                // Обновляем статистику профиля
-                document.getElementById('profileLevel').textContent = currentUser.level;
-                document.getElementById('profileCases').textContent = currentUser.cases;
-                document.getElementById('profileReputation').textContent = currentUser.reputation;
-                document.getElementById('profileHacks').textContent = currentUser.hacks;
-                document.getElementById('userSpecialization').value = currentUser.specialization;
-                document.getElementById('userExperience').value = currentUser.experience;
+                // Проверяем является ли пользователь создателем
+                if (currentUser.email === CREATOR_EMAIL) {
+                    creatorBadge.classList.remove('hidden');
+                    profileBio.textContent = 'Создатель OSINT.HUB и проекта OSINT.EXE';
+                } else {
+                    creatorBadge.classList.add('hidden');
+                }
                 
-                // Обновляем игру
-                document.getElementById('gameHacks').textContent = currentUser.hacks;
+                updateProfileStats();
             } else {
                 authButtons.classList.remove('hidden');
                 userMenu.classList.add('hidden');
-                profileUsername.textContent = 'ГОСТЬ';
-                profileRole.textContent = 'НЕАВТОРИЗОВАННЫЙ ПОЛЬЗОВАТЕЛЬ';
+                profileName.textContent = 'Гость';
+                profileBio.textContent = 'Неавторизованный пользователь';
+                creatorBadge.classList.add('hidden');
             }
+            
+            updatePlatformStats();
         }
 
         function getRoleText(experience) {
             const roles = {
-                'beginner': 'НАЧИНАЮЩИЙ ИССЛЕДОВАТЕЛЬ',
-                'intermediate': 'ОПЫТНЫЙ АНАЛИТИК', 
-                'expert': 'ЭКСПЕРТ OSINT'
+                'beginner': 'Начинающий исследователь',
+                'intermediate': 'Опытный аналитик', 
+                'expert': 'Эксперт OSINT'
             };
-            return roles[experience] || 'ИССЛЕДОВАТЕЛЬ';
+            return roles[experience] || 'Исследователь';
+        }
+
+        function updateProfileStats() {
+            if (currentUser) {
+                document.getElementById('profileLevel').textContent = currentUser.level;
+                document.getElementById('profileReputation').textContent = currentUser.reputation;
+                document.getElementById('profileCompleted').textContent = currentUser.completedLessons.length;
+                document.getElementById('profileMessages').textContent = currentUser.messagesCount;
+                document.getElementById('userSpecialization').value = currentUser.specialization;
+                document.getElementById('userExperience').value = currentUser.experience;
+            }
+        }
+
+        function updatePlatformStats() {
+            const totalUsers = Object.keys(users).length;
+            const activeUsers = Object.values(users).filter(user => 
+                new Date() - new Date(user.lastLogin) < 24 * 60 * 60 * 1000
+            ).length;
+            
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('activeUsers').textContent = activeUsers;
+            document.getElementById('totalMessages').textContent = messages.length;
         }
 
         function saveProfile() {
             if (!currentUser) {
-                showError('Сначала войдите в систему!');
+                showNotification('Сначала войдите в систему!', 'error');
                 return;
             }
             
@@ -1263,217 +1403,291 @@
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             
             updateUI();
-            showSuccess('Профиль успешно сохранен!');
+            showNotification('Профиль успешно сохранен!', 'success');
         }
 
         // ==================== СИСТЕМА ЧАТА ====================
         function loadChatMessages() {
-            const messagesArea = document.getElementById('chatMessages');
-            messagesArea.innerHTML = '';
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = '';
             
-            const chatMessages = JSON.parse(localStorage.getItem('osint_messages') || '[]');
-            
-            chatMessages.forEach(msg => {
-                const messageElement = document.createElement('div');
-                messageElement.className = msg.sender === (currentUser?.username || 'Вы') ? 'message message-self' : 'message';
-                messageElement.innerHTML = `
-                    <div class="message-header">
-                        <strong>${msg.sender}</strong>
-                        <span>${msg.time}</span>
-                    </div>
-                    ${msg.text}
+            messages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.sender === currentUser?.username ? 'sent' : 'received'}`;
+                
+                messageDiv.innerHTML = `
+                    ${msg.sender !== currentUser?.username ? `<div class="message-sender">${msg.sender}</div>` : ''}
+                    <div>${msg.text}</div>
+                    <div class="message-time">${msg.time}</div>
                 `;
-                messagesArea.appendChild(messageElement);
+                
+                container.appendChild(messageDiv);
             });
             
-            messagesArea.scrollTop = messagesArea.scrollHeight;
+            container.scrollTop = container.scrollHeight;
         }
+
+        function updateOnlineUsers() {
+            const container = document.getElementById('onlineUsers');
+            const onlineUsers = Object.values(users).filter(user => 
+                new Date() - new Date(user.lastLogin) < 15 * 60 * 1000
+            );
+            
+            container.innerHTML = '';
+            
+            onlineUsers.forEach(user => {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-item';
+                
+                userDiv.innerHTML = `
+                    <div class="user-avatar">
+                        ${user.username.charAt(0).toUpperCase()}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600;">${user.username}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                            ${user.specialization}
+                        </div>
+                    </div>
+                    <div class="user-status ${user.email === currentUser?.email ? 'online' : 'offline'}"></div>
+                `;
+                
+                container.appendChild(userDiv);
+            });
+        }
+
+        // Обработка отправки сообщений
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
 
         function sendMessage() {
             const input = document.getElementById('messageInput');
-            const message = input.value.trim();
+            const text = input.value.trim();
             
-            if (message) {
-                if (!currentUser) {
-                    showError('Для отправки сообщений необходимо войти в систему!');
-                    return;
-                }
-                
+            if (text && currentUser) {
                 const newMessage = {
                     sender: currentUser.username,
-                    text: message,
+                    text: text,
                     time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
                 };
                 
                 messages.push(newMessage);
+                currentUser.messagesCount++;
+                
                 localStorage.setItem('osint_messages', JSON.stringify(messages));
+                localStorage.setItem('osint_users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 
                 input.value = '';
                 loadChatMessages();
+                updateOnlineUsers();
+            } else if (!currentUser) {
+                showNotification('Для отправки сообщений необходимо войти в систему!', 'error');
             }
         }
 
-        function simulateOnlineUsers() {
-            setInterval(() => {
-                const onlineUsers = document.getElementById('onlineUsers');
-                if (onlineUsers) {
-                    onlineUsers.innerHTML = `
-                        <div class="user-item">🟢 User123 (OSINT)</div>
-                        <div class="user-item">🟢 CyberDetective (Анализ)</div>
-                        <div class="user-item">🟢 GhostProtocol (OPSEC)</div>
-                        <div class="user-item">${currentUser ? '🟢 ' + currentUser.username + ' (' + currentUser.specialization.toUpperCase() + ')' : '🔴 Вы (Не в сети)'}</div>
-                    `;
-                }
-            }, 5000);
-        }
-
-        // ==================== МИНИ-ИГРА ====================
-        function initGame() {
-            generateNewCode();
-            updateGameUI();
-        }
-
-        function generateNewCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = '';
-            for (let i = 0; i < 16; i++) {
-                if (i > 0 && i % 4 === 0) code += '-';
-                code += chars[Math.floor(Math.random() * chars.length)];
-            }
-            gameState.currentTarget = code;
-            gameState.hackAttempts = 0;
-            document.getElementById('hackTarget').textContent = code;
-            document.getElementById('gameMessage').textContent = '';
-            document.getElementById('hackInput').value = '';
-        }
-
-        function attemptHack() {
-            const input = document.getElementById('hackInput').value.toUpperCase().replace(/-/g, '');
-            const target = gameState.currentTarget.replace(/-/g, '');
-            const message = document.getElementById('gameMessage');
+        // ==================== БАЗА ЗНАНИЙ ====================
+        function loadKnowledgeBase() {
+            const container = document.querySelector('.knowledge-grid');
+            container.innerHTML = '';
             
-            if (input === target) {
-                // Успешный взлом
-                gameState.successfulHacks++;
-                gameState.xp += 25;
-                message.textContent = '✅ СИСТЕМА ВЗЛОМАНА! ДОСТУП ПОЛУЧЕН!';
-                message.style.color = 'var(--success)';
+            knowledge.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'knowledge-card glass';
+                card.onclick = () => openLesson(item.id);
                 
-                if (currentUser) {
-                    currentUser.hacks++;
-                    currentUser.reputation += 10;
-                    if (gameState.xp >= 100) {
-                        currentUser.level++;
-                        gameState.xp = 0;
-                        message.textContent += ` 🎉 НОВЫЙ УРОВЕНЬ: ${currentUser.level}!`;
-                    }
-                    users[currentUser.email] = currentUser;
-                    localStorage.setItem('osint_users', JSON.stringify(users));
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                }
+                const progress = currentUser ? 
+                    (currentUser.completedLessons.includes(item.id) ? 100 : 0) : 0;
                 
-                updateUI();
-                updateGameUI();
-                setTimeout(generateNewCode, 2000);
-            } else {
-                // Неудачная попытка
-                gameState.hackAttempts++;
-                message.textContent = `❌ НЕВЕРНЫЙ КОД! ПОПЫТОК: ${gameState.hackAttempts}/3`;
-                message.style.color = 'var(--error)';
+                card.innerHTML = `
+                    <div class="knowledge-icon">
+                        <i class="${item.icon}"></i>
+                    </div>
+                    <h3 class="knowledge-title">${item.title}</h3>
+                    <p class="knowledge-description">${item.description}</p>
+                    <div class="knowledge-progress">
+                        <div class="progress-bar" style="width: ${progress}%"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.9rem; color: var(--text-secondary);">
+                            ${progress === 100 ? 'Завершено' : 'Не начато'}
+                        </span>
+                        <button class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                            ${progress === 100 ? 'Повторить' : 'Начать'}
+                        </button>
+                    </div>
+                `;
                 
-                if (gameState.hackAttempts >= 3) {
-                    message.textContent = '🚨 ТРЕВОГА! СИСТЕМА ЗАБЛОКИРОВАНА!';
-                    setTimeout(generateNewCode, 2000);
-                }
-            }
+                container.appendChild(card);
+            });
         }
 
-        function updateGameUI() {
-            document.getElementById('gameLevel').textContent = gameState.level;
-            document.getElementById('gameXP').textContent = gameState.xp;
-            document.getElementById('gameHacks').textContent = gameState.successfulHacks;
-            document.getElementById('progressBar').style.width = `${gameState.xp}%`;
+        function openLesson(lessonId) {
+            if (!currentUser) {
+                showNotification('Для доступа к урокам необходимо войти в систему!', 'error');
+                return;
+            }
+            
+            // Здесь будет логика открытия урока
+            showNotification(`Открыт урок: ${lessonId}`, 'info');
         }
 
         // ==================== ИНСТРУМЕНТЫ ====================
         function generateLegend() {
-            const names = ['Алексей', 'Дмитрий', 'Сергей', 'Михаил', 'Андрей', 'Владимир'];
-            const jobs = ['журналист', 'студент', 'фрилансер', 'исследователь', 'аналитик', 'блогер'];
-            const cities = ['Москва', 'Санкт-Петербург', 'Новосибирск', 'Екатеринбург', 'Казань', 'Краснодар'];
-            const interests = ['история', 'технологии', 'путешествия', 'фотография', 'спорт', 'музыка'];
+            const names = ['Алексей', 'Дмитрий', 'Сергей', 'Михаил', 'Андрей'];
+            const jobs = ['журналист', 'студент', 'фрилансер', 'исследователь', 'аналитик'];
+            const cities = ['Москва', 'Санкт-Петербург', 'Новосибирск', 'Екатеринбург', 'Казань'];
             
             const legend = {
                 name: names[Math.floor(Math.random() * names.length)],
                 age: Math.floor(Math.random() * 25) + 20,
                 job: jobs[Math.floor(Math.random() * jobs.length)],
-                city: cities[Math.floor(Math.random() * cities.length)],
-                interest: interests[Math.floor(Math.random() * interests.length)]
+                city: cities[Math.floor(Math.random() * cities.length)]
             };
             
-            document.getElementById('legendOutput').innerHTML = `
-                > ИМЯ: ${legend.name}<br>
-                > ВОЗРАСТ: ${legend.age}<br>
-                > ПРОФЕССИЯ: ${legend.job}<br>
-                > ГОРОД: ${legend.city}<br>
-                > ИНТЕРЕСЫ: ${legend.interest}<br>
-                > СТАТУС: ЛЕГЕНДА АКТИВИРОВАНА
-            `;
+            showNotification(`Сгенерирована легенда: ${legend.name}, ${legend.age} лет, ${legend.job}, ${legend.city}`, 'success');
         }
 
         function checkBreaches() {
             const email = document.getElementById('emailCheck').value;
             if (email) {
-                document.getElementById('breachResult').innerHTML = `
-                    > ПРОВЕРКА: ${email}<br>
-                    > СТАТУС: УТЕЧЕК НЕ ОБНАРУЖЕНО<br>
-                    > РЕКОМЕНДАЦИЯ: ИСПОЛЬЗУЙТЕ 2FA
-                `;
+                showNotification(`Проверка email ${email} завершена. Утечек не обнаружено.`, 'success');
+            } else {
+                showNotification('Введите email для проверки', 'error');
             }
-        }
-
-        function showTool(tool) {
-            const tools = {
-                password: '> СГЕНЕРИРОВАН ПАРОЛЬ: Os1nt!2024$Secure<br>> СЛОЖНОСТЬ: ОЧЕНЬ ВЫСОКАЯ',
-                metadata: '> АНАЛИЗ МЕТАДАННЫХ АКТИВИРОВАН<br>> СКАНИРУЙТЕ ФАЙЛЫ ДЛЯ ИНФОРМАЦИИ',
-                network: '> ПРОВЕРКА СЕТИ ВЫПОЛНЕНА<br>> БЕЗОПАСНОСТЬ: ВЫСОКАЯ'
-            };
-            alert(tools[tool] || 'Инструмент в разработке');
         }
 
         // ==================== УТИЛИТЫ ====================
-        function showSuccess(message) {
-            const successDiv = document.createElement('div');
-            successDiv.className = 'success';
-            successDiv.textContent = message;
-            document.body.appendChild(successDiv);
-            setTimeout(() => successDiv.remove(), 3000);
-        }
+        function showNotification(message, type = 'info') {
+            // Создаем уведомление
+            const notification = document.createElement('div');
+            notification.className = `glass`;notification.style.cssText = `
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--primary)'};
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    z-index: 3000;
+    animation: slideInRight 0.3s ease;
+    max-width: 300px;
+`;
 
-        function showError(message) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error';
-            errorDiv.textContent = message;
-            document.body.appendChild(errorDiv);
-            setTimeout(() => errorDiv.remove(), 3000);
-        }
+notification.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'}-circle"></i>
+        <span>${message}</span>
+    </div>
+`;
 
-        function startTraining() {
-            if (!currentUser) {
-                showAuthModal();
-                return;
-            }
-            showPage('tools');
-            showSuccess('Тренировка начата! Используйте инструменты для практики.');
-        }
+document.body.appendChild(notification);
 
-        // Авто-сохранение каждые 30 секунд
-        setInterval(() => {
-            if (currentUser) {
-                users[currentUser.email] = currentUser;
-                localStorage.setItem('osint_users', JSON.stringify(users));
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            }
-        }, 30000);
-    </script>
+setTimeout(() => {
+    notification.style.animation = 'slideOutRight 0.3s ease';
+    setTimeout(() => notification.remove(), 300);
+}, 3000);
+}
+
+function toggleTheme() {
+const currentTheme = document.body.getAttribute('data-theme') || 'dark';
+const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+document.body.setAttribute('data-theme', newTheme);
+settings.theme = newTheme;
+localStorage.setItem('osint_settings', JSON.stringify(settings));
+
+const themeIcon = document.querySelector('.theme-toggle i');
+themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+
+showNotification(`Тема изменена на ${newTheme === 'dark' ? 'тёмную' : 'светлую'}`, 'success');
+}
+
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+document.addEventListener('DOMContentLoaded', function() {
+// Загружаем настройки
+if (Object.keys(settings).length === 0) {
+    settings = {
+        theme: 'dark',
+        language: 'ru',
+        notifications: true
+    };
+    localStorage.setItem('osint_settings', JSON.stringify(settings));
+}
+
+// Применяем настройки
+document.body.setAttribute('data-theme', settings.theme);
+document.getElementById('languageSelect').value = settings.language;
+document.querySelector('.theme-toggle i').className = settings.theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+
+// Инициализируем данные
+initCreatorAccount();
+initKnowledgeBase();
+
+// Загружаем текущего пользователя
+const savedUser = localStorage.getItem('currentUser');
+if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    showPage('profile');
+}
+
+updateUI();
+
+// Обновляем статистику каждые 30 секунд
+setInterval(updatePlatformStats, 30000);
+
+// Авто-сохранение каждую минуту
+setInterval(() => {
+    if (currentUser) {
+        users[currentUser.email] = currentUser;
+        localStorage.setItem('osint_users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+}, 60000);
+});
+
+// Добавляем стили для анимаций
+const style = document.createElement('style');
+style.textContent = `
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes messageSlide {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+`;
+document.head.appendChild(style);
+</script>
 </body>
-                        </html>
+</html>
