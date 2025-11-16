@@ -125,7 +125,7 @@
 
         .card-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
         }
@@ -289,27 +289,62 @@
             gap: 10px;
         }
 
-        /* Мемы */
-        .meme-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .meme-card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .meme-img {
+        /* Модальные окна */
+        .modal {
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
             width: 100%;
-            height: 200px;
-            background: var(--border);
+            height: 100%;
+            background: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-secondary);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .auth-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .auth-page {
+            display: none;
+        }
+
+        .auth-page.active {
+            display: block;
         }
 
         /* Адаптивность */
@@ -320,10 +355,6 @@
 
             .nav-links {
                 display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
             }
 
             .chat-container {
@@ -357,6 +388,7 @@
         .mt-20 { margin-top: 20px; }
         .p-20 { padding: 20px; }
         .hidden { display: none; }
+        .error { color: var(--error); font-size: 12px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -372,8 +404,8 @@
             <a href="#" class="nav-link" onclick="showPage('creator')">Создатель</a>
         </div>
         <div class="nav-auth" id="authButtons">
-            <a href="#" class="auth-btn btn-login" onclick="showAuthModal('login')">Войти</a>
-            <a href="#" class="auth-btn btn-register" onclick="showAuthModal('register')">Регистрация</a>
+            <a href="#" class="auth-btn btn-login" onclick="showAuthModal()">Войти</a>
+            <a href="#" class="auth-btn btn-register" onclick="showAuthModal()">Регистрация</a>
         </div>
         <div class="nav-auth hidden" id="userMenu">
             <span id="userName" class="auth-btn btn-login"></span>
@@ -613,62 +645,59 @@
         </div>
     </div>
 
-    <!-- Модальные окна -->
+    <!-- Модальное окно авторизации -->
     <div id="authModal" class="modal hidden">
         <div class="modal-content">
             <span class="close" onclick="closeAuthModal()">&times;</span>
-            <h2 id="modalTitle">Вход</h2>
-            <form id="authForm">
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-input" id="authEmail" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Пароль</label>
-                    <input type="password" class="form-input" id="authPassword" required>
-                </div>
-                <div class="form-group hidden" id="regFields">
-                    <label class="form-label">Никнейм</label>
-                    <input type="text" class="form-input" id="authUsername">
-                    <label class="form-label">Подтверждение пароля</label>
-                    <input type="password" class="form-input" id="authConfirmPassword">
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Продолжить</button>
-            </form>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="showAuthTab('login')">Вход</div>
+                <div class="auth-tab" onclick="showAuthTab('register')">Регистрация</div>
+            </div>
+
+            <!-- Форма входа -->
+            <div id="loginPage" class="auth-page active">
+                <h2>Вход в аккаунт</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" class="form-input" id="loginPassword" required>
+                    </div>
+                    <div id="loginError" class="error hidden"></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+                </form>
+            </div>
+
+            <!-- Форма регистрации -->
+            <div id="registerPage" class="auth-page">
+                <h2>Создание аккаунта</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">Никнейм</label>
+                        <input type="text" class="form-input" id="regUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="regEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" class="form-input" id="regPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Подтверждение пароля</label>
+                        <input type="password" class="form-input" id="regConfirmPassword" required>
+                    </div>
+                    <div id="registerError" class="error hidden"></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
+                </form>
+            </div>
         </div>
     </div>
-
-    <style>
-        .modal {
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 30px;
-            width: 90%;
-            max-width: 400px;
-            position: relative;
-        }
-
-        .close {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-    </style>
 
     <script>
         // Система аутентификации
@@ -686,70 +715,41 @@
             event.target.classList.add('active');
         }
 
-        function showAuthModal(type) {
-            const modal = document.getElementById('authModal');
-            const title = document.getElementById('modalTitle');
-            const regFields = document.getElementById('regFields');
-            
-            if (type === 'register') {
-                title.textContent = 'Регистрация';
-                regFields.classList.remove('hidden');
-            } else {
-                title.textContent = 'Вход';
-                regFields.classList.add('hidden');
-            }
-            
-            modal.classList.remove('hidden');
+        function showAuthModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+            showAuthTab('login');
         }
 
         function closeAuthModal() {
             document.getElementById('authModal').classList.add('hidden');
+            clearErrors();
         }
 
-        document.getElementById('authForm').addEventListener('submit', function(e) {
+        function showAuthTab(tab) {
+            // Обновляем табы
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-page').forEach(p => p.classList.remove('active'));
+            
+            document.querySelector(`.auth-tab:nth-child(${tab === 'login' ? 1 : 2})`).classList.add('active');
+            document.getElementById(tab === 'login' ? 'loginPage' : 'registerPage').classList.add('active');
+            
+            clearErrors();
+        }
+
+        function clearErrors() {
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('registerError').classList.add('hidden');
+        }
+
+        // Обработка формы входа
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
-            const isRegister = document.getElementById('regFields').classList.contains('hidden') === false;
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
             
-            if (isRegister) {
-                const username = document.getElementById('authUsername').value;
-                const confirmPassword = document.getElementById('authConfirmPassword').value;
-                
-                if (password !== confirmPassword) {
-                    alert('Пароли не совпадают!');
-                    return;
-                }
-                
-                registerUser(username, email, password);
-            } else {
-                loginUser(email, password);
-            }
-        });
-
-        function registerUser(username, email, password) {
-            const user = {
-                username,
-                email,
-                password,
-                level: 1,
-                cases: 0,
-                reputation: 0,
-                specialization: 'osint',
-                experience: 'beginner'
-            };
-            
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            localStorage.setItem('user_' + email, JSON.stringify(user));
-            
-            currentUser = user;
-            updateUI();
-            closeAuthModal();
-            showPage('profile');
-        }
-
-        function loginUser(email, password) {
+            // Проверяем пользователя
             const userData = localStorage.getItem('user_' + email);
             
             if (userData) {
@@ -761,18 +761,82 @@
                     closeAuthModal();
                     showPage('profile');
                 } else {
-                    alert('Неверный пароль!');
+                    errorDiv.textContent = 'Неверный пароль!';
+                    errorDiv.classList.remove('hidden');
                 }
             } else {
-                alert('Пользователь не найден!');
+                errorDiv.textContent = 'Пользователь с таким email не найден!';
+                errorDiv.classList.remove('hidden');
             }
-        }
+        });
+
+        // Обработка формы регистрации
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const errorDiv = document.getElementById('registerError');
+            
+            // Валидация
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Пароли не совпадают!';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (password.length < 6) {
+                errorDiv.textContent = 'Пароль должен содержать минимум 6 символов!';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (username.length < 3) {
+                errorDiv.textContent = 'Никнейм должен содержать минимум 3 символа!';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            // Проверяем, нет ли уже пользователя с таким email
+            if (localStorage.getItem('user_' + email)) {
+                errorDiv.textContent = 'Пользователь с таким email уже существует!';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            // Создаем пользователя
+            const user = {
+                username: username,
+                email: email,
+                password: password,
+                level: 1,
+                cases: 0,
+                reputation: 0,
+                specialization: 'osint',
+                experience: 'beginner',
+                registered: new Date().toISOString()
+            };
+            
+            // Сохраняем в localStorage
+            localStorage.setItem('user_' + email, JSON.stringify(user));
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            
+            currentUser = user;
+            updateUI();
+            closeAuthModal();
+            showPage('profile');
+            
+            alert(`Добро пожаловать, ${username}! Регистрация прошла успешно!`);
+        });
 
         function logout() {
             currentUser = null;
             localStorage.removeItem('currentUser');
             updateUI();
             showPage('home');
+            alert('Вы вышли из аккаунта');
         }
 
         function updateUI() {
@@ -806,7 +870,7 @@
         function getRoleText(experience) {
             const roles = {
                 'beginner': 'Начинающий исследователь',
-                'intermediate': 'Опытный аналитик',
+                'intermediate': 'Опытный аналитик', 
                 'expert': 'Эксперт OSINT'
             };
             return roles[experience] || 'Исследователь';
@@ -824,8 +888,8 @@
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             localStorage.setItem('user_' + currentUser.email, JSON.stringify(currentUser));
             
-            alert('Профиль сохранен!');
             updateUI();
+            alert('Профиль сохранен!');
         }
 
         function sendMessage() {
@@ -840,6 +904,8 @@
                 messagesArea.appendChild(messageElement);
                 messagesArea.scrollTop = messagesArea.scrollHeight;
                 input.value = '';
+            } else if (!currentUser) {
+                alert('Для отправки сообщений необходимо войти в систему!');
             }
         }
 
@@ -875,17 +941,18 @@
 
         function startTraining() {
             if (!currentUser) {
-                showAuthModal('login');
+                showAuthModal();
                 return;
             }
             alert('Запуск OSINT симулятора...');
         }
 
-        // Инициализация
+        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             const savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
+                showPage('profile'); // Автоматически переходим в профиль
             }
             updateUI();
         });
@@ -893,7 +960,7 @@
         // Адаптивность для мобильных
         function initMobileMenu() {
             if (window.innerWidth <= 768) {
-                // Добавляем кнопку мобильного меню
+                // Можно добавить мобильное меню
             }
         }
 
@@ -901,4 +968,4 @@
         initMobileMenu();
     </script>
 </body>
-</html>
+    </html>
