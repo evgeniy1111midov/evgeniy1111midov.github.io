@@ -1545,20 +1545,19 @@
         }
 
         function updateTexts() {
-            const t = translations[currentLanguage];
-            if (!t) return;
-            
             document.querySelectorAll('[data-translate]').forEach(element => {
                 const key = element.getAttribute('data-translate');
-                if (t[key]) {
-                    element.textContent = t[key];
+                const translation = getTranslation(key);
+                if (translation) {
+                    element.textContent = translation;
                 }
             });
             
             document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
                 const key = element.getAttribute('data-translate-placeholder');
-                if (t[key]) {
-                    element.placeholder = t[key];
+                const translation = getTranslation(key);
+                if (translation) {
+                    element.placeholder = translation;
                 }
             });
         }
@@ -1779,7 +1778,7 @@
                 showPage('profile');
                 showNotification('Успешный вход в систему!', 'success');
             } else {
-                errorDiv.textContent = 'Неверный email или пароль!';
+                errorDiv.textContent = getTranslation('loginError') || 'Неверный email или пароль!';
             }
         }
 
@@ -1794,28 +1793,28 @@
             
             // Валидация
             if (password !== confirmPassword) {
-                errorDiv.textContent = 'Пароли не совпадают!';
+                errorDiv.textContent = getTranslation('passwordMismatch') || 'Пароли не совпадают!';
                 return;
             }
             
             if (password.length < 6) {
-                errorDiv.textContent = 'Пароль должен содержать минимум 6 символов!';
+                errorDiv.textContent = getTranslation('passwordLength') || 'Пароль должен содержать минимум 6 символов!';
                 return;
             }
             
             if (username.length < 3) {
-                errorDiv.textContent = 'Никнейм должен содержать минимум 3 символа!';
+                errorDiv.textContent = getTranslation('usernameLength') || 'Никнейм должен содержать минимум 3 символа!';
                 return;
             }
             
             // Проверка на уникальность ника создателя
             if (username.toLowerCase() === CREATOR_USERNAME.toLowerCase()) {
-                errorDiv.textContent = 'Этот никнейм зарезервирован для создателя платформы!';
+                errorDiv.textContent = getTranslation('creatorUsernameReserved') || 'Этот никнейм зарезервирован для создателя платформы!';
                 return;
             }
             
             if (users[email]) {
-                errorDiv.textContent = 'Пользователь с таким email уже существует!';
+                errorDiv.textContent = getTranslation('userExists') || 'Пользователь с таким email уже существует!';
                 return;
             }
             
@@ -1843,7 +1842,7 @@
             closeAuthModal();
             showPage('profile');
             
-            showNotification(`Добро пожаловать, ${username}!`, 'success');
+            showNotification(`${getTranslation('welcome')}, ${username}!`, 'success');
         }
 
         function logout() {
@@ -1851,7 +1850,7 @@
             localStorage.removeItem('currentUser');
             updateUI();
             showPage('home');
-            showNotification('Вы вышли из системы', 'info');
+            showNotification(getTranslation('logoutSuccess') || 'Вы вышли из системы', 'info');
         }
 
         // ==================== ИНТЕРФЕЙС ====================
@@ -1863,13 +1862,11 @@
             document.getElementById(pageId).classList.add('active');
             
             // Обновляем активные кнопки навигации
-            if (event) {
-                if (event.target.classList.contains('mobile-nav-btn')) {
-                    event.target.classList.add('active');
-                } else {
-                    event.target.classList.add('active');
-                }
-            }
+            const activeNavLink = document.querySelector(`.nav-link[onclick="showPage('${pageId}')"]`);
+            const activeMobileBtn = document.querySelector(`.mobile-nav-btn[onclick="showPage('${pageId}')"]`);
+            
+            if (activeNavLink) activeNavLink.classList.add('active');
+            if (activeMobileBtn) activeMobileBtn.classList.add('active');
             
             // Специальная логика для разных страниц
             if (pageId === 'community') {
@@ -1922,7 +1919,7 @@
                 // Проверяем является ли пользователь создателем
                 if (currentUser.email === CREATOR_EMAIL) {
                     creatorBadge.classList.remove('hidden');
-                    profileBio.textContent = 'Создатель OSINT.HUB и проекта OSINT.EXE';
+                    profileBio.textContent = getTranslation('creatorBio');
                 } else {
                     creatorBadge.classList.add('hidden');
                 }
@@ -1931,8 +1928,8 @@
             } else {
                 authButtons.classList.remove('hidden');
                 userMenu.classList.add('hidden');
-                profileName.textContent = 'Гость';
-                profileBio.textContent = 'Неавторизованный пользователь';
+                profileName.textContent = getTranslation('guest') || 'Гость';
+                profileBio.textContent = getTranslation('unauthorized');
                 creatorBadge.classList.add('hidden');
             }
             
@@ -1941,11 +1938,11 @@
 
         function getRoleText(experience) {
             const roles = {
-                'beginner': 'Начинающий исследователь',
-                'intermediate': 'Опытный аналитик', 
-                'expert': 'Эксперт OSINT'
+                'beginner': getTranslation('beginnerResearcher') || 'Начинающий исследователь',
+                'intermediate': getTranslation('experiencedAnalyst') || 'Опытный аналитик', 
+                'expert': getTranslation('osintExpert') || 'Эксперт OSINT'
             };
-            return roles[experience] || 'Исследователь';
+            return roles[experience] || getTranslation('researcher') || 'Исследователь';
         }
 
         function updateProfileStats() {
@@ -1972,7 +1969,7 @@
 
         function saveProfile() {
             if (!currentUser) {
-                showNotification('Сначала войдите в систему!', 'error');
+                showNotification(getTranslation('loginRequired') || 'Сначала войдите в систему!', 'error');
                 return;
             }
             
@@ -1984,7 +1981,7 @@
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             
             updateUI();
-            showNotification('Профиль успешно сохранен!', 'success');
+            showNotification(getTranslation('profileSaved') || 'Профиль успешно сохранен!', 'success');
         }
 
         // ==================== СИСТЕМА ЧАТА ====================
@@ -2067,7 +2064,7 @@
                 loadChatMessages();
                 updateOnlineUsers();
             } else if (!currentUser) {
-                showNotification('Для отправки сообщений необходимо войти в систему!', 'error');
+                showNotification(getTranslation('loginRequiredChat') || 'Для отправки сообщений необходимо войти в систему!', 'error');
             }
         }
 
@@ -2095,10 +2092,10 @@
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 0.9rem; color: var(--text-secondary);">
-                            ${progress === 100 ? 'Завершено' : 'Не начато'}
+                            ${progress === 100 ? (getTranslation('completed') || 'Завершено') : (getTranslation('notStarted') || 'Не начато')}
                         </span>
                         <button class="btn btn-primary" style="padding: 0.5rem 1rem;">
-                            ${progress === 100 ? 'Повторить' : 'Начать'}
+                            ${progress === 100 ? (getTranslation('repeat') || 'Повторить') : (getTranslation('start') || 'Начать')}
                         </button>
                     </div>
                 `;
@@ -2109,36 +2106,50 @@
 
         function openLesson(lessonId) {
             if (!currentUser) {
-                showNotification('Для доступа к урокам необходимо войти в систему!', 'error');
+                showNotification(getTranslation('loginRequiredLessons') || 'Для доступа к урокам необходимо войти в систему!', 'error');
                 return;
             }
             
             // Здесь будет логика открытия урока
-            showNotification(`Открыт урок: ${lessonId}`, 'info');
+            showNotification(`${getTranslation('lessonOpened') || 'Открыт урок'}: ${lessonId}`, 'info');
         }
 
         // ==================== ИНСТРУМЕНТЫ ====================
         function generateLegend() {
-            const names = ['Алексей', 'Дмитрий', 'Сергей', 'Михаил', 'Андрей'];
-            const jobs = ['журналист', 'студент', 'фрилансер', 'исследователь', 'аналитик'];
-            const cities = ['Москва', 'Санкт-Петербург', 'Новосибирск', 'Екатеринбург', 'Казань'];
-            
-            const legend = {
-                name: names[Math.floor(Math.random() * names.length)],
-                age: Math.floor(Math.random() * 25) + 20,
-                job: jobs[Math.floor(Math.random() * jobs.length)],
-                city: cities[Math.floor(Math.random() * cities.length)]
+            const names = {
+                ru: ['Алексей', 'Дмитрий', 'Сергей', 'Михаил', 'Андрей'],
+                uk: ['Олексій', 'Дмитро', 'Сергій', 'Михайло', 'Андрій'],
+                en: ['Alex', 'Michael', 'David', 'John', 'Robert']
             };
             
-            showNotification(`Сгенерирована легенда: ${legend.name}, ${legend.age} лет, ${legend.job}, ${legend.city}`, 'success');
+            const jobs = {
+                ru: ['журналист', 'студент', 'фрилансер', 'исследователь', 'аналитик'],
+                uk: ['журналіст', 'студент', 'фрілансер', 'дослідник', 'аналітик'],
+                en: ['journalist', 'student', 'freelancer', 'researcher', 'analyst']
+            };
+            
+            const cities = {
+                ru: ['Москва', 'Санкт-Петербург', 'Новосибирск', 'Екатеринбург', 'Казань'],
+                uk: ['Київ', 'Львів', 'Одеса', 'Харків', 'Дніпро'],
+                en: ['New York', 'London', 'Berlin', 'Paris', 'Tokyo']
+            };
+            
+            const legend = {
+                name: names[currentLanguage][Math.floor(Math.random() * names[currentLanguage].length)],
+                age: Math.floor(Math.random() * 25) + 20,
+                job: jobs[currentLanguage][Math.floor(Math.random() * jobs[currentLanguage].length)],
+                city: cities[currentLanguage][Math.floor(Math.random() * cities[currentLanguage].length)]
+            };
+            
+            showNotification(`${getTranslation('legendGenerated') || 'Сгенерирована легенда'}: ${legend.name}, ${legend.age} ${getTranslation('years') || 'лет'}, ${legend.job}, ${legend.city}`, 'success');
         }
 
         function checkBreaches() {
             const email = document.getElementById('emailCheck').value;
             if (email) {
-                showNotification(`Проверка email ${email} завершена. Утечек не обнаружено.`, 'success');
+                showNotification(`${getTranslation('emailChecked') || 'Проверка email'} ${email} ${getTranslation('noBreachesFound') || 'завершена. Утечек не обнаружено.'}`, 'success');
             } else {
-                showNotification('Введите email для проверки', 'error');
+                showNotification(getTranslation('enterEmail') || 'Введите email для проверки', 'error');
             }
         }
 
@@ -2186,7 +2197,7 @@
             const themeIcon = document.querySelector('.theme-toggle i');
             themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
 
-            showNotification(`Тема изменена на ${newTheme === 'dark' ? 'тёмную' : 'светлую'}`, 'success');
+            showNotification(`${getTranslation('themeChanged') || 'Тема изменена на'} ${newTheme === 'dark' ? (getTranslation('dark') || 'тёмную') : (getTranslation('light') || 'светлую')}`, 'success');
         }
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
@@ -2203,7 +2214,7 @@
 
             // Применяем настройки
             document.body.setAttribute('data-theme', settings.theme);
-            document.getElementById('languageSelect').value = settings.language;
+            document.getElementById('languageSelect').value = currentLanguage;
             document.querySelector('.theme-toggle i').className = settings.theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
 
             // Инициализируем данные
@@ -2229,9 +2240,7 @@
             }
             
             updateUI();
-
-            // Обновляем тексты после загрузки
-            setTimeout(updateTexts, 100);
+            updateTexts();
 
             // Обновляем статистику каждые 30 секунд
             setInterval(updatePlatformStats, 30000);
@@ -2285,4 +2294,4 @@
         document.head.appendChild(style);
     </script>
 </body>
-                            </html>
+            </html>
